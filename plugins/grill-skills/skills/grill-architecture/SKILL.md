@@ -1,6 +1,6 @@
 ---
 name: grill-architecture
-description: Architectural pressure-test of a plan or issue before implementation. Challenges every prescribed type, folder, config-flow, layer assignment, and cross-cutting placement against codebase precedent, framework idiom, and layering principles. Use at two granularities — (1) after to-prd, before to-issues, for cross-cutting architectural ADRs that the issue decomposition inherits; (2) at issue-start, before code, for slice-specific decisions inheriting prior ADRs. Output: revised plan + ADRs for hard-to-reverse picks. For reversible per-slice implementation mechanics once the architecture is settled — reuse of domain affordances, minimal read-path projections, interface spec-gaps, schema-change impact sweep, cross-workspace compat — use grill-implementation instead.
+description: Architectural pressure-test of a plan or issue before implementation. Targets layered/hexagonal .NET codebases (CQRS, EF Core, ASP.NET). Challenges every prescribed type, folder, config-flow, layer assignment, and cross-cutting placement against codebase precedent, .NET framework idiom, and layering principles. Use at two granularities — (1) after to-prd, before to-issues, for cross-cutting architectural ADRs that the issue decomposition inherits; (2) at issue-start, before code, for slice-specific decisions inheriting prior ADRs. Output: revised plan + ADRs for hard-to-reverse picks. For reversible per-slice implementation mechanics once the architecture is settled — reuse of domain affordances, minimal read-path projections, interface spec-gaps, schema-change impact sweep, cross-workspace compat — use grill-implementation instead.
 ---
 
 <what-to-do>
@@ -13,6 +13,10 @@ Ask questions one at a time. If a question can be answered by exploring the code
 
 <supporting-info>
 
+## Target
+
+Layered/hexagonal **.NET** codebases — CQRS, EF Core, ASP.NET. The lens *principles* (naming-vs-responsibility, folder convention, layer ownership, value-type scope, port shape, config flow, cross-service transport) port to any Domain/Application/Infrastructure split; the **smell lists are .NET-idiom** — treat them as the canonical examples and map to your stack.
+
 ## Codebase awareness
 
 Walk these before grilling:
@@ -24,35 +28,15 @@ Walk these before grilling:
 5. **Responsibility count per type.** For each spec-named type, list its responsibilities (transport / policy / mapping / persistence / etc.). >1 distinct responsibility → tag as first Q to grill.
 6. **Issue-tree scope.** If the spec has a parent issue / epic / project, read it for inherited scope (deferred items, explicit out-of-scope, parent-level ADRs). Cite when auto-resolving via parent scope: "answered upstream by `<parent ref>`."
 
-Recon findings are agent-internal working memory. Surface only a short bullet list in the preamble (one bullet per significant finding — key sources read, precedents verified, ADR state, entity/lookup facts that drive auto-resolves); reserve detailed precedents for the Q that consumes them.
-
-**Recon bullets are one-liners.** Pack topic + load-bearing fact(s) per bullet. Drop prose connectives ("already wired", "exists at", parenthetical asides), drop file paths that aren't load-bearing, drop redundant qualifier clauses. Keep only facts that an auto-resolve or a Q recommendation will cite. Aim ~50% denser than narrative prose.
-
-Output a preamble per **Preamble structure** below.
+Recon is agent-internal. Surface it in the preamble as **one-liner bullets** — topic + load-bearing fact per bullet (sources read, precedents verified, ADR state, entity/lookup facts that drive auto-resolves). Drop prose connectives, non-load-bearing paths, redundant qualifiers; keep only facts an auto-resolve or a Q recommendation will cite. Reserve detailed precedents (file paths, code excerpts) for the Q that consumes them.
 
 ## Preamble structure
 
-### Dependency annotation
+**Dependency tags.** Each Q carries `deps:` — `recon` (answerable from recon alone), `Qn` (single upstream), or `Q1, Q3, …` (multi-dep). Cross-layer types (result records, port interfaces, value objects) are usually multi-dep — result-type homes depend on layering AND naming; when in doubt add the upstream dep. When an upstream Q shifts a downstream Q's option space, **restate** the downstream Q with the new constraints — don't re-grill from scratch.
 
-Each Q carries a `deps:` tag:
+**Auto-resolve.** When recon gives a dominant precedent (≥2 examples, no conflicting signal), state the answer as applied with `(Reason: <one-line>)`; user can override. First run the relevant `## During the session` lens's smell list — if any smell could fire, grill instead. When a Q has both a shape dimension and an ownership dimension, split: shape auto-resolvable from precedent, ownership always grilled.
 
-- `deps: recon` — answerable from recon alone
-- `deps: Qn` — single upstream
-- `deps: Q1, Q3, ...` — multi-dep
-
-When upstream Qs settle in a way that shifts a downstream Q's option space, **restate** the downstream Q with the new constraints — don't re-grill from scratch.
-
-Cross-layer types (result records, port interfaces, value objects crossing layers) typically have multi-deps. Result-type homes depend on layering AND naming, not naming alone. When in doubt, add the upstream dep.
-
-### Auto-resolve recon-answered Qs
-
-If recon establishes a dominant precedent (single dominant convention, ≥2 examples, no conflicting signal), state the answer in the preamble as auto-applied: `(Reason: <one-line reason>)`. User can override.
-
-### Guard against auto-resolving architectural questions
-
-Before auto-resolving, run the relevant `## During the session` lens's smell list. If any smell could fire, grill instead.
-
-Never auto-resolve:
+**Never auto-resolve:**
 
 - Responsibility split / layering
 - Naming role / vocabulary (transport- vs domain-shaped)
@@ -60,8 +44,6 @@ Never auto-resolve:
 - Cross-cutting placement (flags, persistence side-effects, retries, observability)
 - Cross-service wire shape (`[FromBody]` record vs query-string scalars vs path params) when the slice introduces an HTTP hop between two services in the same repo
 - Any Q where a `## During the session` smell rule could plausibly apply
-
-When a Q has both a shape dimension AND an ownership dimension, split: shape part auto-resolvable from precedent; ownership part always grilled.
 
 ### Preamble format
 
@@ -89,13 +71,11 @@ Q4  <topic label, 2-5 words>           deps: Q1, Q3
 Proceed with Q1?
 ```
 
-Slate entries are short **topic labels** (2–5 words naming what'll be decided), not mini-option lists or trade-off summaries. The full Q — options, smell check, recommendation, sub-picks — emits when Q1 starts grilling. Don't preview options in the slate; the user sees them when the Q fires.
-
-Detailed recon (file paths, code excerpts, multi-line precedent dumps) belongs inside the Q that consumes it — not in the preamble. Each Q's recommendation should cite the specific precedent / spec line / smell rule it leans on; that's where detail pays its way.
+Slate entries are short **topic labels** (2–5 words), not option lists or trade-off summaries — the full Q (options, smell check, recommendation, sub-picks) emits only when that Q fires. Each Q's recommendation cites the specific precedent / spec line / smell rule it leans on; that's where the detailed recon pays its way.
 
 ## Grill order
 
-Topological order: deps before dependents. Layering Q is the root. If the spec lists naming or flag placement first, do not grill them in that order — grill the layering question they presuppose.
+Topological: deps before dependents. The layering Q is the root. If the spec lists naming or flag placement first, don't grill them in that order — grill the layering question they presuppose.
 
 ## During the session
 
@@ -168,38 +148,13 @@ Watch for:
 
 ### Challenge cross-service transport shape
 
-When a slice introduces an HTTP / RPC / queue hop between two services *in the same repo*, grill three coupled dimensions: request shape, contract location, and failure mode on rename.
+When a slice introduces an HTTP / RPC / queue hop between two services *in the same repo*, grill three coupled dimensions: request shape (`[FromBody]` record vs query-string scalars vs path params), contract location (caller- vs callee-owned vs shared), and failure mode on rename (compile error > test failure > runtime trace > silent no-op). Default new internal routes to `[FromBody]` records; never inherit a legacy sibling route's shape by default.
 
-**Request shape:**
+Load **REFERENCE:** [cross-service-transport.md](./references/cross-service-transport.md) for the full option trade-offs and watch-for list when this lens fires.
 
-- `[FromBody]` record — JSON property binding; missing required field on a non-nullable record param fails loudly with a 400.
-- Query-string scalars — name-based binding; missing or misnamed parameters silently bind to `default` (`Guid.Empty`, `null`, `0`). Silent no-ops in production.
-- Path parameters with route constraints (`{id:guid}`) — malformed / missing values 404 at routing time.
+### Stay at architectural altitude
 
-**Contract location:**
-
-- Caller-owned — each side defines its own DTO; JSON aligns at the wire. Cheap but no compile-time enforcement.
-- Callee-owned — server publishes a Contracts project; caller depends on it. Rename breaks the build on both sides.
-- Shared in Common.\* — everyone can import. Tempting but erodes service boundaries; usually wrong for directed RPC.
-
-**Failure mode on rename:**
-
-- Compile error (typed contract package) > test failure (record + integration test) > runtime trace (record + unit-test-only) > silent no-op (string-concat URL or scalar param). Lower-numbered modes are categorically better; design for compile-time when the surface will grow.
-
-Watch for:
-
-- Reusing a legacy user-route's query-string + scalar shape for a new service-to-service route in the same controller class. The two routes share class real estate but serve different callers (XHR-from-MVC vs typed HttpClient), different auth contexts, different blast radii. Inheritance of shape is path-dependence.
-- Hand-rolled URL strings in HTTP clients (`$"/path?id={x}&name={y}"`) — each literal is a free-floating contract assumption; renames on the server don't ripple back to the client.
-- "Match the existing controller's shape" recommendations without distinguishing whether the existing shape is *load-bearing for legacy callers* (back-compat) vs. *accidental* (legacy choice that doesn't need to propagate).
-- Test fakes that short-circuit the transport (e.g. a hand-rolled `Recording*HttpClient` mocking the typed-client interface) — they let wire-shape bugs ship because the unit test doesn't exercise the URL/body construction. Pair with at least one `WebApplicationFactory` integration test.
-
-Recommendation skew: for new internal-service routes, default to `[FromBody]` records over query-string scalars; defer shared-contract package extraction until the 2nd or 3rd hop, but pre-design for it (records on both sides, same shape, ready to consolidate). Never auto-resolve in favour of inheriting the legacy sibling route's shape.
-
-### Implementation-mechanics lenses live in grill-implementation
-
-This skill stops at the hard-to-reverse, ADR-worthy decisions: naming, folder, layer, value-type placement, port shape, config/secret flow. The reversible per-slice mechanics — reuse of existing domain affordances, minimal read-path projections, the interface spec-gap checklist (`CancellationToken`, exception/idempotency/observability contracts), the cross-cutting impact sweep on schema changes, and cross-workspace dependency-graph compat — are a separate altitude with a separate output (a fix-now list, no ADRs). They belong to the **grill-implementation** skill, run at issue-start once these architectural decisions are settled.
-
-Don't run those lenses here. If one surfaces a genuinely architectural question (a derivation that should become a domain method, a port whose shape redistributes responsibility across layers), pull it back up into the relevant macro lens above. Otherwise leave it for grill-implementation.
+This skill stops at hard-to-reverse, ADR-worthy decisions: naming, folder, layer, value-type placement, port shape, config/secret flow. Reversible per-slice mechanics (reuse, projection, spec-gaps, impact sweep, workspace compat) belong to **grill-implementation**, run later. Don't run them here. If one surfaces a genuinely architectural question — a derivation that should become a domain method, a port shape that redistributes responsibility across layers — pull it up into the relevant macro lens above; otherwise leave it for grill-implementation.
 
 ### Surface coupled decisions
 
@@ -213,17 +168,9 @@ Sub-concerns ≠ option modifiers. When recommending an option, distinguish the 
 
 Bundle small divergences from precedent (typed vs named, timeouts, headers, lifetime, log levels) into one "divergence cluster" Q if each takes <2 sentences AND none unlocks coupled decisions downstream. Never bundle a divergence cluster with a load-bearing layering or naming decision — different cognitive modes.
 
-### Cross-reference with code; verify in-grill
+### Verify in-grill, cite applied rules
 
-Before recommending a change naming a specific precedent, verify it exists and is current. Memory ≠ `ls` / `grep` confirmation.
-
-If a Q depends on a verifiable fact (file exists, attribute present, provider registered, default value), verify with Bash / Read inside the grill — don't punt to "check this later."
-
-Uncertain about a fact? Verify before recommending. Don't ship with `?` or "I think." Grills produce decisions, not best-guess assertions.
-
-### Cite applied rules
-
-When a Q's answer follows from a previously-applied lens or a prior session decision, cite it briefly rather than re-derive. "Answered by the enum-placement rule. Confirm?" beats re-running the full argument.
+Lenses turn on facts — does the precedent exist, is the attribute present, is the provider registered, what's the default value. Verify with Bash / Read / grep before recommending; memory is not confirmation. Don't ship with `?`, "I think", or "check this later" — grills produce decisions. When a Q's answer follows from a lens already applied or a prior session decision, cite it briefly ("Answered by the enum-placement rule. Confirm?") rather than re-derive.
 
 ### Update ADRs inline
 

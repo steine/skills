@@ -1,6 +1,6 @@
 ---
 name: grill-implementation
-description: Implementation-level pressure-test of a single slice's draft before (or just after) writing code. Validates the slice's concrete mechanics against the codebase — reuse of existing domain affordances, minimal read-path projections, interface spec-gaps (CancellationToken, result types, observability, idempotency), the cross-cutting impact of any schema/type change, and cross-workspace dependency-graph compatibility. Use at issue-start once the architecture is settled (ADRs/grill-architecture done) and you're about to implement — or on a fresh diff you want vetted before PR. Inherits prior architectural decisions; does not re-litigate naming, folder, layer, or port-shape. Output: a corrected slice plan and a fix-now list. No ADRs.
+description: Implementation-level pressure-test of a single slice's draft before (or just after) writing code. Targets .NET slices (EF Core, CQRS) with TS/npm-workspace front-ends. Validates the slice's concrete mechanics against the codebase — reuse of existing domain affordances, minimal read-path projections, interface spec-gaps (CancellationToken, result types, observability, idempotency), the cross-cutting impact of any schema/type change, and cross-workspace dependency-graph compatibility. Use at issue-start once the architecture is settled (ADRs/grill-architecture done) and you're about to implement — or on a fresh diff you want vetted before PR. Inherits prior architectural decisions; does not re-litigate naming, folder, layer, or port-shape. Output: a corrected slice plan and a fix-now list. No ADRs.
 ---
 
 <what-to-do>
@@ -15,15 +15,15 @@ This skill is **validation**, not discovery. It takes the slice's prescription a
 
 <supporting-info>
 
-## Where this sits
+## Target
 
-Three grills, three altitudes — keep them separate or they dilute:
+**.NET** slices — EF Core, CQRS — with **TS/npm-workspace** front-ends (the cross-workspace lens). Lens principles port to any layered codebase; the smell lists (`.AsNoTracking()`, `[Projectable]`, `CancellationToken`, tsconfig/npm hoist) are stack-idiom — adapt them to yours.
 
-- **grill-architecture** — before code, macro. Hard-to-reverse picks: naming, folder, layer assignment, value-type placement, port shape, config/secret flow. Produces ADRs.
-- **grill-implementation** (this skill) — at code-time, micro. Reversible per-slice mechanics: reuse, projection, spec-gaps, impact sweep, workspace compat. Produces a fix list. No ADRs — these decisions are cheap to change, so recording them as durable decisions is noise.
-- **improve-codebase-architecture** — anytime, retrospective. Discovers deepening opportunities across the whole codebase.
+## Stay at slice altitude
 
-The firewall against `improve-codebase-architecture`: this skill asks "does *this slice* reuse the affordance that already exists?" — slice-local, one call site. The codebase-wide question ("should these N call sites consolidate into one deep module?") is out of scope; punt it up to `improve-codebase-architecture` rather than expanding the slice.
+`grill-architecture` settled the hard-to-reverse picks (naming, folder, layer, port shape) upstream — inherit them, don't re-open them. This skill validates the slice's reversible mechanics and produces a fix list, no ADRs.
+
+The firewall against `improve-codebase-architecture`: this skill asks "does *this slice* reuse the affordance that already exists?" — slice-local, one call site. The codebase-wide question ("should these N call sites consolidate into one deep module?") is out of scope; punt it up rather than expanding the slice.
 
 ## Recon before grilling
 
@@ -115,16 +115,9 @@ For each schema / mapping / domain-type change in the slice, sweep the blast rad
 
 ### Cross-workspace dependency-graph compat
 
-When the slice adds an import from a shared workspace lib that this consumer didn't previously pull through its barrel, treat it as a **first-crossing** event. The act of importing reshapes the graph the typechecker and bundler traverse; latent mismatches dormant in static reads surface the moment a new path crosses the boundary.
+When the slice adds an import from a shared workspace lib that this consumer didn't previously pull through its barrel, treat it as a **first-crossing** event — importing reshapes the graph tsc and the bundler traverse, so latent version/tsconfig mismatches surface only once the new path crosses the boundary. Probe with a POC import + `tsc -b` / `npm run build` against the consumer before signing off; static recon can't see what tsc refuses to compile once the graph shifts.
 
-Watch for:
-
-- Mismatched runtime/types versions across workspaces (React 18 vs 19) deduped via npm hoist — the first stricter-consumer import surfaces cross-version type collisions tsc never visited
-- Shared lib shipping `.tsx` source vs a built `dist/` — `skipLibCheck` masks `.d.ts` only; sources get type-checked under the importer's stricter flags
-- The consumer's stricter tsconfig (`verbatimModuleSyntax`, `erasableSyntaxOnly`, `noUnusedLocals`) traversing into a lib not written for it
-- Peer deps the shared lib doesn't declare, relying on root hoist
-
-Probe before signing off: run a minimum-viable POC import + `npm run build` / `tsc -b` against the consumer. Static recon can't see what tsc refuses to compile once the graph shifts. On collision, the options are: unify versions monorepo-wide (a blocker slice), ship `dist/` from the shared lib (a separate slice), relax the consumer's tsconfig (local, loses strictness), or inline rather than import (local, duplicates).
+Load **REFERENCE:** [workspace-compat.md](./references/workspace-compat.md) for the watch-for list and the collision options when this lens fires.
 
 ## Verify facts in-grill
 
