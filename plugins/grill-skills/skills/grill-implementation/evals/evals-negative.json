@@ -1,0 +1,27 @@
+{
+  "skill_name": "grill-implementation",
+  "note": "Negative cases for iteration 2. Each draft is already correct or the tempting finding is out-of-scope. Failure mode = over-firing: manufacturing nits, re-litigating settled architecture, or ballooning a clean slice into a codebase-wide refactor. A good run produces few/zero in-lane fixes and explicitly declines the bait.",
+  "evals": [
+    {
+      "id": 3,
+      "name": "clean-slice-over-grill-resistance",
+      "prompt": "About to add a read endpoint GetQuoteByRefNo in Sales/Acme.Sales.Application/Features/Quotes/. RefNo is unique (there's a DuplicateQuoteRefNoException guarding creation). Here's my draft:\n\n```csharp\npublic class GetQuoteByRefNo\n{\n    public record Query(string RefNo) : IRequest<QuoteVm>;\n\n    public class Handler(IAppDbContext dbContext) : IRequestHandler<Query, QuoteVm>\n    {\n        public async Task<QuoteVm> Handle(Query request, CancellationToken cancellationToken)\n        {\n            return await dbContext.Quotes\n                .Where(q => q.RefNo == request.RefNo)\n                .Select(q => QuoteVm.ProjectFrom(q))\n                .FirstOrDefaultAsync(cancellationToken)\n                ?? throw new NotFoundException(nameof(Quote), request.RefNo);\n        }\n    }\n}\n```\n\nArchitecture (folder, naming, layer) follows the existing Quotes feature and is settled. Grill the implementation before I build it.",
+      "files": [],
+      "trap": "The draft already does everything the skill's lenses ask: projects via QuoteVm.ProjectFrom (reuse + minimal projection), single server-side query, CancellationToken threaded, NotFoundException guard, RefNo is unique so FirstOrDefault is correct. There is no legitimate in-lane fix. A good run confirms it's clean (0, at most 1 genuinely-uncertain micro-note) and says so plainly. Over-grilling = inventing findings to look productive."
+    },
+    {
+      "id": 4,
+      "name": "settled-architecture-stay-in-lane",
+      "prompt": "Implementing a small slice: a reader that fetches the current fulfillment reference for a dispatched order. ADR-0011 (already accepted) settled that the port is named IFulfillmentRefNoClient and lives in Sales/Acme.Sales.Application/Features/Inbox/ alongside the handler that uses it, and that the rule was a deliberate, documented trade-off. Here's my draft adapter under Infrastructure/Fulfillment/:\n\n```csharp\ninternal sealed class FulfillmentRefNoClient(IFulfillmentApiClient client, ILogger<FulfillmentRefNoClient> logger)\n    : IFulfillmentRefNoClient\n{\n    public async Task<string?> ReadRefNoAsync(Guid fulfillmentOrderId, CancellationToken cancellationToken)\n    {\n        var response = await client.GetOrderAsync(fulfillmentOrderId, cancellationToken);\n        return response?.Source.Ref;\n    }\n}\n```\n\nGrill the implementation before I write the test. Naming and placement are ADR-settled per above — I want the mechanics checked.",
+      "files": [],
+      "trap": "Two visible architecture smells: (1) a transport-shaped name 'IFulfillmentRefNoClient' sitting in the Application layer (the exact 'Application interface wearing transport vocab' smell grill-architecture hunts), (2) a port defined in a feature folder rather than near its adapter. Both are explicitly declared ADR-settled and out of scope. The mechanics are essentially clean (CT present, ILogger present, nullable return is honest). A good run checks mechanics, finds little to fix, and explicitly declines to re-open the naming/placement — routing it to grill-architecture if the user wants it revisited. Failure = re-litigating the settled naming/layer (the exact mistake the iteration-1 baseline made on eval-1)."
+    },
+    {
+      "id": 5,
+      "name": "scope-creep-punt-not-balloon",
+      "prompt": "Small slice: a new endpoint GetQuoteName(Guid quoteId) that returns the display name for one quote, for a tooltip. Here's my draft, which reuses the existing derivation:\n\n```csharp\npublic class GetQuoteName\n{\n    public record Query(Guid QuoteId) : IRequest<string>;\n\n    public class Handler(IAppDbContext dbContext) : IRequestHandler<Query, string>\n    {\n        public async Task<string> Handle(Query request, CancellationToken cancellationToken)\n        {\n            return await dbContext.Quotes\n                .Where(q => q.Id == request.QuoteId)\n                .Select(q => QuoteVm.ProjectFrom(q).QuoteName)\n                .FirstOrDefaultAsync(cancellationToken)\n                ?? throw new NotFoundException(nameof(Quote), request.QuoteId);\n        }\n    }\n}\n```\n\nWhile you're at it: I know the quote-name / date-span string is computed in a few places (OrderVm.LinkedQuoteName, QuoteVm.QuoteName, and the frontend). Grill the implementation of this slice.",
+      "files": [],
+      "trap": "The slice itself is correct and minimal — it reuses QuoteVm.QuoteName, projects, has CT and a not-found guard. The user dangles a real codebase-wide consolidation opportunity (the quote-name string is derived in 2-3 divergent places). A good run keeps the slice as-is, and records 'consolidate the N quote-name derivations behind one affordance' as a PUNTED-UP item for improve-codebase-architecture — explicitly NOT expanding this slice to do the cross-codebase refactor. Failure = ballooning the slice into a multi-file unification, or grilling the other call sites as if they were in scope."
+    }
+  ]
+}

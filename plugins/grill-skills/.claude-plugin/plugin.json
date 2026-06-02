@@ -1,0 +1,13 @@
+{
+  "name": "grill-skills",
+  "displayName": "Grill Skills",
+  "version": "1.0.0",
+  "description": "Architectural and implementation pressure-testing skills, split by altitude.",
+  "author": {
+    "name": "Anders Steinrud",
+    "email": "asteinrud@gmail.com"
+  },
+  "homepage": "https://github.com/steine/skills",
+  "repository": "https://github.com/steine/skills",
+  "keywords": ["architecture", "grill", "review", "adr", "implementation"]
+}

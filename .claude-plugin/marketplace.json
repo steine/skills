@@ -1,0 +1,22 @@
+{
+  "name": "steine-skills",
+  "owner": {
+    "name": "Anders Steinrud",
+    "email": "asteinrud@gmail.com"
+  },
+  "description": "Personal Claude Code skills.",
+  "metadata": {
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "grill-skills",
+      "source": "grill-skills",
+      "description": "Architectural and implementation pressure-testing skills, split by altitude: grill-architecture (macro, ADR-worthy decisions, before code) and grill-implementation (per-slice mechanics, fix-now list, at code-time).",
+      "version": "1.0.0",
+      "author": {
+        "name": "Anders Steinrud"
+      }
+    }
+  ]
+}

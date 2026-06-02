@@ -1,0 +1,23 @@
+{
+  "skill_name": "grill-implementation",
+  "evals": [
+    {
+      "id": 0,
+      "name": "reuse-and-projection-on-inbox-query",
+      "prompt": "I'm about to implement a new read endpoint in the Inbox feature: GetActiveCustomersForOrder — given an OrderId it returns the customers that may be assigned to that order (active relationship with the order's vendor). Here's my draft handler in Sales/Acme.Sales.Application/Features/Inbox/:\n\n```csharp\npublic class GetActiveCustomersForOrder\n{\n    public record Query(Guid OrderId) : IRequest<IReadOnlyList<CustomerVm>>;\n    public record CustomerVm(Guid Id, string Name);\n\n    public class Handler(IAppDbContext dbContext) : IRequestHandler<Query, IReadOnlyList<CustomerVm>>\n    {\n        public async Task<IReadOnlyList<CustomerVm>> Handle(Query request, CancellationToken cancellationToken)\n        {\n            var order = await dbContext.Orders\n                .Include(o => o.Vendor)\n                .FirstOrDefaultAsync(o => o.Id == request.OrderId, cancellationToken);\n            var customers = await dbContext.Customers.ToListAsync(cancellationToken);\n            var result = customers\n                .Where(c => dbContext.VendorCustomerRelationships.Any(vcr =>\n                    vcr.VendorId == order.Vendor.Id && vcr.CustomerId == c.Id\n                    && !vcr.IsDeleted && vcr.StartDate <= DateOnly.FromDateTime(DateTime.Today)\n                    && (vcr.EndDate == null || vcr.EndDate >= DateOnly.FromDateTime(DateTime.Today))))\n                .Select(c => new CustomerVm(c.Id, c.Name))\n                .ToList();\n            return result;\n        }\n    }\n}\n```\n\nGrill the implementation before I build it. The architecture (folder, naming, layer) follows the existing Inbox feature and is settled.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "spec-gaps-on-new-port",
+      "prompt": "Implementing a new port for the Inbox slice. After an order is dispatched to the fulfillment system we need to publish a domain event to an external bus so downstream systems can react. Here's the draft interface I'm adding under Sales/Acme.Sales.Infrastructure/:\n\n```csharp\npublic interface IInboxEventPublisher\n{\n    Task PublishDispatched(Guid orderId, string orderRef);\n}\n```\n\nThe layer and naming follow the existing Fulfillment folder conventions and are already decided. Grill the implementation of this port before I write the adapter.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "impact-sweep-on-schema-change",
+      "prompt": "I'm adding a new persisted column LinkedQuoteRefNo (nullable string) plus a LinkedQuoteName (nullable string) to the Order entity so the inbox can show the linked quote's reference. The column add itself and the migration approach are settled by a prior ADR. Grill the implementation — what else does adding these two properties to Order touch across the Sales codebase that I need to handle in this slice before I open the PR?",
+      "files": []
+    }
+  ]
+}
