@@ -1,6 +1,5 @@
 {
   "name": "grill-skills",
-  "displayName": "Grill Skills",
   "version": "1.0.0",
   "description": "Architectural and implementation pressure-testing skills, split by altitude.",
   "author": {
