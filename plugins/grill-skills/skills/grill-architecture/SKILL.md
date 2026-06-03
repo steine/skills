@@ -1,6 +1,6 @@
 ---
 name: grill-architecture
-description: Architectural pressure-test of a plan or issue before implementation. Targets layered/hexagonal .NET codebases (CQRS, EF Core, ASP.NET). Challenges every prescribed type, folder, config-flow, layer assignment, and cross-cutting placement against codebase precedent, .NET framework idiom, and layering principles. Use at two granularities — (1) after to-prd, before to-issues, for cross-cutting architectural ADRs that the issue decomposition inherits; (2) at issue-start, before code, for slice-specific decisions inheriting prior ADRs. Output: revised plan + ADRs for hard-to-reverse picks. For reversible per-slice implementation mechanics once the architecture is settled — reuse of domain affordances, minimal read-path projections, interface spec-gaps, schema-change impact sweep, cross-workspace compat — use grill-implementation instead.
+description: Architectural pressure-test of a plan or issue before implementation. Targets layered/hexagonal codebases via per-stack smell packs (.NET complete; Ruby/Go stubs). Challenges every prescribed type, folder, config-flow, layer assignment, and cross-cutting placement against codebase precedent, framework idiom, and layering principles. Use at two granularities — (1) after to-prd, before to-issues, for cross-cutting architectural ADRs that the issue decomposition inherits; (2) at issue-start, before code, for slice-specific decisions inheriting prior ADRs. Output: revised plan + ADRs for hard-to-reverse picks. For reversible per-slice implementation mechanics once the architecture is settled — reuse of domain affordances, minimal read-path projections, interface spec-gaps, schema-change impact sweep, cross-workspace compat — use grill-implementation instead.
 ---
 
 <what-to-do>
@@ -13,16 +13,22 @@ Ask questions one at a time. If a question can be answered by exploring the code
 
 <supporting-info>
 
-## Target
+## Stack packs
 
-Layered/hexagonal **.NET** codebases — CQRS, EF Core, ASP.NET. The lens *principles* (naming-vs-responsibility, folder convention, layer ownership, value-type scope, port shape, config flow, cross-service transport) port to any Domain/Application/Infrastructure split; the **smell lists are .NET-idiom** — treat them as the canonical examples and map to your stack.
+Layered/hexagonal codebases. The lens *principles* below (naming-vs-responsibility, folder convention, layer ownership, value-type scope, port shape, config flow, cross-service transport) are **stack-agnostic** — they hold for any Domain/Application/Infrastructure split. The concrete **smell lists live in per-stack packs**:
+
+- `*.csproj` / `*.sln` → [references/stacks/dotnet.md](./references/stacks/dotnet.md) — complete
+- `Gemfile` → [references/stacks/ruby.md](./references/stacks/ruby.md) — stub
+- `go.mod` → [references/stacks/go.md](./references/stacks/go.md) — stub
+
+Detect the stack during recon and **load the matching pack now**; apply its per-lens tells as you run each lens below. If the stack isn't covered, use the .NET pack as the worked example, map by analogy, and flag the gap. If a lens doesn't bind (a deliberately flat codebase), say so per the pack rather than force-fitting.
 
 ## Codebase awareness
 
 Walk these before grilling:
 
 1. **Existing precedents.** For each external system or cross-cutting pattern in the spec, find any sibling implementation. Note folder, type names, layer split, config shape.
-2. **Folder conventions.** Sample 2–3 existing modules. Feature folders or by-kind (`/Interfaces`, `/Services`, `/Models`)? Pick the dominant.
+2. **Folder conventions.** Sample 2–3 existing modules. Feature folders or by-kind buckets? Pick the dominant. (Stack pack has the idiomatic bucket names.)
 3. **Framework idioms.** Identify the framework. Note conventional answers for config flow, DI scope, typed clients, cross-cutting handlers, secret layering.
 4. **Existing ADRs.** Read `docs/adr/`. Do not re-litigate prior decisions.
 5. **Responsibility count per type.** For each spec-named type, list its responsibilities (transport / policy / mapping / persistence / etc.). >1 distinct responsibility → tag as first Q to grill.
@@ -42,7 +48,7 @@ Recon is agent-internal. Surface it in the preamble as **one-liner bullets** —
 - Naming role / vocabulary (transport- vs domain-shaped)
 - Config-flow ownership (composition root vs service)
 - Cross-cutting placement (flags, persistence side-effects, retries, observability)
-- Cross-service wire shape (`[FromBody]` record vs query-string scalars vs path params) when the slice introduces an HTTP hop between two services in the same repo
+- Cross-service wire shape (request body vs query-string scalars vs path params) when the slice introduces an HTTP hop between two services in the same repo
 - Any Q where a `## During the session` smell rule could plausibly apply
 
 ### Preamble format
@@ -79,78 +85,35 @@ Topological: deps before dependents. The layering Q is the root. If the spec lis
 
 ## During the session
 
+Each lens below is the stack-agnostic *principle*. The concrete tells (and recommendation skew) for the detected stack live under the matching heading in its pack — **run the lens, then apply the pack's same-named section.**
+
 ### Challenge naming against responsibility
 
-Does the name describe role, or where it lives / who consumes it?
-
-Watch for:
-
-- Consumer / project prefix duplicating namespace
-- Role mismatch — "Client" promising transport while returning domain shape
-- Lock to one vendor / product when more impls may follow
-- Stripping vendor name on a vendor-specific impl
-- Application interfaces wearing transport vocab (`IXyzApiClient` in Application leaks transport upward — prefer `IXyzGateway` / `IXyzDispatcher` at the App boundary; reserve transport-shaped names for Infrastructure)
+Does the name describe role, or where it lives / who consumes it? The core smell is a transport-shaped name on a type that sits at the domain/application boundary. → **Stack pack: *Naming vs responsibility*.**
 
 ### Challenge folder placement against convention
 
-Does this match the codebase's folder convention, or invent a new one?
-
-Watch for:
-
-- Folder-by-kind buckets (`/Interfaces`, `/Services`, `/Models`, `/Handlers`) in feature-folder repos
-- Folders named after consumer when sibling folders are named after target system / capability
-- New features nested under a dominant existing feature folder — default to sibling at parent level; only nest when genuinely subordinate
-
-When multiple sub-conventions co-exist (e.g., dedicated `Enums/` vs alongside-entity), surface as a sub-pick. Right answer is usually the dominant one — count occurrences.
+Does this match the codebase's dominant folder convention, or invent a new one? New features default to a sibling at the parent level; only nest when genuinely subordinate (a data reference is not subordination). When sub-conventions co-exist, count occurrences and pick the dominant. → **Stack pack: *Folder placement*.**
 
 ### Challenge layer assignment
 
-For each responsibility — transport, policy, domain mapping, persistence, flags, retries, observability — which layer owns it, and why?
-
-Watch for:
-
-- One class owning transport + policy + domain mapping
-- Feature flags in transport classes instead of the application layer
-- Persistence side-effects inside infrastructure adapters
-- Cross-cutting concerns at the wrong abstraction level
-
-Precedent informs options, never justifies a recommendation by itself. "Match the sibling" is path-dependence, not architecture.
+For each responsibility — transport, policy, domain mapping, persistence, flags, retries, observability — which layer owns it, and why? One type owning several is the root smell. Precedent informs options, never justifies a recommendation by itself: "match the sibling" is path-dependence, not architecture. → **Stack pack: *Layer assignment*.**
 
 ### Challenge value-type placement
 
-For each enum, value object, or DTO: feature-scoped, domain-scoped, or contract-scoped?
-
-Watch for:
-
-- Enums backing EF columns / persisted state placed in a feature folder — belong in the domain layer
-- DTOs shared across features placed in one feature folder — hoist to shared types
-- Transport-shape contracts (request/response records) in Application or Domain — belong in Infrastructure under the transport adapter
+For each enum, value object, or DTO: feature-, domain-, or contract-scoped? Persisted-state types belong in the domain; types shared across features hoist to a shared home; transport-shape contracts live with the transport adapter. → **Stack pack: *Value-type placement*.**
 
 ### Challenge port shape at definition
 
-When introducing a port, grill all three in one stroke:
-
-1. Return type
-2. Parameter shape — primitive ID vs domain record vs wire record
-3. Auxiliary params (`CancellationToken`, observability handles)
-
-Parameter shape distributes responsibility. Primitive ID → adapter owns lookup + mapping + transport. Domain record → dispatcher owns lookup + build; adapter owns mapping + transport only.
+When introducing a port, grill all three in one stroke: (1) return type, (2) parameter shape — primitive ID vs domain record vs wire record, (3) auxiliary params (cancellation/deadline token, observability handles). Parameter shape distributes responsibility: a primitive ID → the adapter owns lookup + mapping + transport; a domain record → the dispatcher owns lookup + build, the adapter owns mapping + transport only. → **Stack pack: *Port shape*** (for the stack's cancellation idiom + conventions).
 
 ### Challenge config and secret flow
 
-For each config key and secret: who reads it, who owns it, idiomatic for the framework?
-
-Watch for:
-
-- Composition root forwarding service-specific config the service could read directly
-- Double-sourcing — service reads its own config AND host forwards the same keys
-- Secrets co-mingled with non-secret config in the wrong layer
+For each config key and secret: who reads it, who owns it, idiomatic for the framework? Watch for the composition root forwarding config a service could read itself, double-sourcing, and secrets co-mingled with non-secret config. → **Stack pack: *Config and secret flow*.**
 
 ### Challenge cross-service transport shape
 
-When a slice introduces an HTTP / RPC / queue hop between two services *in the same repo*, grill three coupled dimensions: request shape (`[FromBody]` record vs query-string scalars vs path params), contract location (caller- vs callee-owned vs shared), and failure mode on rename (compile error > test failure > runtime trace > silent no-op). Default new internal routes to `[FromBody]` records; never inherit a legacy sibling route's shape by default.
-
-Load **REFERENCE:** [cross-service-transport.md](./references/cross-service-transport.md) for the full option trade-offs and watch-for list when this lens fires.
+When a slice introduces an HTTP / RPC / queue hop between two services *in the same repo*, grill three coupled dimensions: request shape, contract location (caller- vs callee-owned vs shared), and failure mode on rename (compile error > test failure > runtime trace > silent no-op). Never inherit a legacy sibling route's shape by default. → **Stack pack: *Cross-service transport*** (the .NET pack links the full [cross-service-transport.md](./references/cross-service-transport.md) deep-dive).
 
 ### Stay at architectural altitude
 
