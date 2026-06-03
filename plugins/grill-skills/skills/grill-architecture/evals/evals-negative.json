@@ -1,0 +1,41 @@
+{
+  "skill_name": "grill-architecture",
+  "note": "Negative cases. Each plan is already correct, settled upstream, or the tempting finding is the wrong altitude. Failure mode = over-firing: manufacturing nits, re-litigating ADR-settled decisions, grilling questions recon already answers, running implementation-altitude lenses, or over-producing ADRs. A good run produces few/zero Qs, auto-resolves what precedent settles, and explicitly declines the bait.",
+  "evals": [
+    {
+      "id": 6,
+      "name": "clean-plan-resist-over-grill",
+      "prompt": "Plan for a read endpoint listing a vendor's active customers. New handler `GetActiveCustomersForVendor` placed in `Sales/Acme.Sales.Application/Features/Inbox/` (flat, matching every sibling handler), depending on `IAppDbContext` directly like every other query in the feature, returning a `CustomerVm(Guid Id, string Name)` projected in the query. No new ports, no external calls, no new persisted types. Grill the architecture.",
+      "files": [],
+      "trap": "Nothing here is hard-to-reverse or ADR-worthy: it follows the feature-folder convention, names by role, single responsibility, introduces no port/enum/config. There is no architectural decision to grill. A good run auto-resolves placement from precedent in the preamble, confirms there's nothing to challenge (0 Qs, or 1 trivially-confirmed), and offers to hand the read-path mechanics to grill-implementation — without manufacturing a layering or naming debate. Over-firing = inventing a port abstraction or a 'should this be split further' question where none is warranted."
+    },
+    {
+      "id": 7,
+      "name": "adr-settled-stay-in-lane",
+      "prompt": "Planning the fulfillment port. ADR-0007 (accepted) settled that the port is named `IFulfillmentGateway`, lives in `Sales/Acme.Sales.Application/Features/Inbox/`, and returns a domain `FulfillmentRef` value object — a deliberate, documented choice. My plan follows the ADR exactly and adds one method `Task<FulfillmentRef?> ReadRef(Guid orderId, CancellationToken ct)`. Grill the architecture.",
+      "files": [],
+      "trap": "Naming, layer, and return-type are explicitly ADR-settled. The visible 'smell' — a Gateway in Application returning a domain value object — is exactly what the ADR decided on purpose. A good run reads docs/adr/, cites ADR-0007, declines to re-litigate naming/layer/return-type, and finds the one mechanic (CancellationToken) is already present so there's nothing to add. Failure = re-opening the settled naming or layer because a smell-list pattern matched, ignoring the ADR."
+    },
+    {
+      "id": 8,
+      "name": "implementation-mechanics-punt-down",
+      "prompt": "Plan: a query `GetOrderName(Guid orderId)` returning the order's display name. The architecture is trivial and matches siblings (flat feature folder, `IAppDbContext`). While you grill: I know the query should probably project just the name column instead of loading the whole `Order`, and the handler needs a `CancellationToken` and `.AsNoTracking()`. Grill the architecture.",
+      "files": [],
+      "trap": "The dangled items — column-subset projection, CancellationToken, AsNoTracking — are reversible per-slice implementation mechanics that belong to grill-implementation, not architectural decisions. There are no hard-to-reverse picks here. A good run notes the architecture is clean, explicitly routes the projection/CT/tracking items to grill-implementation rather than grilling them, and offers to switch skills. Failure = running the minimal-projection / spec-gap lenses (which live in grill-implementation) inside the architecture grill, blurring the altitude."
+    },
+    {
+      "id": 9,
+      "name": "folder-placement-auto-resolves",
+      "prompt": "New feature 'Returns'. A return is always initiated against an existing order and carries that `OrderId`, so it's tempting to tuck it under the `Orders/` feature. Plan: place it at `Sales/Acme.Sales.Application/Features/Returns/` as a flat sibling to the existing `Orders/`, `Quotes/`, and `Inbox/` feature folders. All three existing features are flat sibling feature folders at that level, there is no by-kind bucketing anywhere in the repo, and nothing is nested under another feature. Grill the architecture.",
+      "files": [],
+      "trap": "The `OrderId` reference dangles a subordination temptation — 'returns come from orders, so nest Returns under Orders'. But that is a domain data relationship, not a folder-subordination signal: a return is its own capability with its own lifecycle, and the folder rule is 'default to sibling at the parent level; only nest when genuinely subordinate', against a unanimous flat-siblings precedent (3 examples, zero nesting). A good run auto-resolves `Returns/` as a sibling in the preamble (citing the rule + precedent), explicitly notes the OrderId coupling is not a structural signal, and does NOT open a nesting debate. Failure = recommending — or seriously grilling — nesting `Returns/` under `Orders/` because returns 'come from' orders, mistaking a data reference for structural subordination."
+    },
+    {
+      "id": 10,
+      "name": "no-adr-warranted",
+      "prompt": "Plan: a new query handler `GetVendorOrderCount` returning an inline `record Result(int Count)`, matching the three sibling count-queries in the feature. We're deliberately NOT adding a caching or read-model layer — the count hits the database directly on every call. I think that 'no caching' decision is significant and want it on the record, so please draft an ADR for it. Grill the architecture and produce the ADR.",
+      "files": [],
+      "trap": "The user explicitly frames 'no caching layer' as ADR-worthy and directly instructs the agent to draft the ADR. But the decision fails all three ADR gates: it is cheap to reverse (add caching later if a measured need appears), unsurprising (matches the three siblings and is the default for a trivial scalar count), and rests on a speculative 'perf might matter later' rather than a real present trade-off with alternatives genuinely weighed. A good run pushes back against the user's framing — declines to draft the ADR now, names the gate(s) it fails, and offers to record it only when a real performance trade-off materialises. Failure = complying with the instruction and drafting the ADR because the user asked / it sounds weighty — the exact over-production the 'Offer ADRs sparingly' rule guards against. (This is also a pressure test: the skill must resist user-applied pressure to over-document.)"
+    }
+  ]
+}

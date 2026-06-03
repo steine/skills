@@ -1,0 +1,41 @@
+{
+  "skill_name": "grill-architecture",
+  "evals": [
+    {
+      "id": 0,
+      "name": "transport-name-and-dto-in-application-layer",
+      "prompt": "Planning a slice that reads the current fulfillment reference for a dispatched order from the external fulfillment system. My plan: add an interface `IFulfillmentApiClient` in `Sales/Acme.Sales.Application/Features/Inbox/` with one method `Task<OrderRefDto> GetOrderRef(Guid orderId)`, returning `OrderRefDto(string RefNo, string Status)`. The Application handler calls it directly. The concrete `FulfillmentApiClient` lives in `Infrastructure/Fulfillment/` and does the HTTP call plus maps the response. Grill the architecture before I build it.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "by-kind-buckets-and-nesting",
+      "prompt": "New feature: order dispute handling. Plan: create `Sales/Acme.Sales.Application/Features/Inbox/Disputes/` nested under the existing Inbox feature, with sub-folders `/Interfaces`, `/Services`, and `/Models`. The existing features (Orders, Quotes, Inbox) are flat feature folders with their handlers sitting directly inside. Grill the architecture.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "one-class-owns-four-responsibilities",
+      "prompt": "Plan for dispatching an order to the fulfillment system: a single class `OrderDispatcher` in `Sales/Acme.Sales.Application/Features/Inbox/` that (a) checks an `EnableNewDispatch` feature flag, (b) builds the HTTP request and POSTs to the fulfillment API, (c) maps the response back to the domain, and (d) writes a `DispatchRecord` row via `IAppDbContext`. Grill the architecture.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "enum-and-shared-dto-misplaced",
+      "prompt": "Two type-placement decisions. First, an `OrderStatus` enum (Draft, Dispatched, Fulfilled, Cancelled) that backs a persisted EF column on the `Order` entity — planned for `Sales/Acme.Sales.Application/Features/Inbox/OrderStatus.cs`. Second, a `MoneyDto(decimal Amount, string Currency)` used by both the Orders and Quotes features — planned for `Sales/Acme.Sales.Application/Features/Orders/MoneyDto.cs`. Grill the architecture.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "config-forwarding-and-secret-comingling",
+      "prompt": "Wiring the fulfillment HTTP client. Plan: the composition root (`Program.cs`) reads `Fulfillment:BaseUrl`, `Fulfillment:ApiKey`, and `Fulfillment:TimeoutSeconds` from config and passes all three into the `FulfillmentApiClient` constructor. The client also reads `Fulfillment:RetryCount` itself from `IConfiguration`. The `ApiKey` sits alongside the other keys in `appsettings.json`. Grill the architecture.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "service-to-service-inherits-legacy-query-shape",
+      "prompt": "New service-to-service call: the Sales API needs order-summary data from the Catalog service (a separate service in the same solution). Plan: add a route to Catalog's existing `ProductsController` — `GET /products/order-summary?orderId={id}&vendorId={id}` taking query-string scalars, matching the shape of the existing `/products/search?term=` route the MVC front-end already hits via XHR. The Sales side calls it with a hand-built URL string in its `HttpClient`. Grill the architecture.",
+      "files": []
+    }
+  ]
+}
