@@ -3,6 +3,19 @@
 Architectural grills for Matt Pocock's engineering skill suite.
 I use Matt's skill suite extensively in my workflow, but I felt the architectural dimension was sometimes lacking in the result. 
 
+## Supported stacks
+
+| Stack | Detected by | Coverage |
+|-------|-------------|----------|
+| .NET (CQRS / EF Core / ASP.NET) | `*.csproj` / `*.sln` | ✅ complete |
+| TS front-end — React | `tsconfig.json` + `react` | ✅ complete |
+| TS front-end — Angular | `tsconfig.json` + `@angular/core` | 🚧 stub |
+| TS back-end — Node (NestJS / Express) | `tsconfig.json` + `@nestjs`/`express`, no DOM | 🚧 stub |
+| Ruby / Rails | `Gemfile` | 🚧 stub |
+| Go | `go.mod` | 🚧 stub |
+
+Coverage applies to both skills (architecture + implementation). Stubs are seeded with real tells but not yet grill-tested — see [MAINTAINERS.md](plugins/grill-skills/MAINTAINERS.md) to fill or add one.
+
 ## Origin & when to use
 
 These extend [Matt Pocock's engineering skill suite](https://github.com/mattpocock/skills) (`grill-with-docs`, `to-prd`, `to-issues`) in the architectural dimension.
@@ -35,7 +48,7 @@ One plugin, **grill-skills**, bundling two skills that are a deliberate split of
 | `grill-architecture` | Macro — hard-to-reverse decisions | Refinement, before `to-prd` | Revised plan + **ADRs** |
 | `grill-implementation` | Micro — reversible per-slice mechanics | Sprint, at issue pickup (opt. pre-PR) | **Fix-now list** (no ADRs) |
 
-Both pressure-test against the codebase via composable per-stack packs (.NET + TS/React; Angular/Ruby/Go stubs). For the internal structure and how to extend it, see [plugins/grill-skills/MAINTAINERS.md](plugins/grill-skills/MAINTAINERS.md).
+Both pressure-test against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs). For the internal structure and how to extend it, see [plugins/grill-skills/MAINTAINERS.md](plugins/grill-skills/MAINTAINERS.md).
 
 ## Install
 

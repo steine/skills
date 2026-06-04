@@ -1,6 +1,6 @@
 # Stack pack overlay: React
 
-**Overlay — load *with* [ts.md](./ts.md), not instead of it.** Triggered when `react` / `react-dom` is in deps. `ts.md` carries the universal layers (transport, domain, server/client state, DTO placement, shared-package, folders); this overlay carries React's **view-logic layer** and the per-lens tells `ts.md` defers. Run each spine lens, apply the `ts.md` section, then layer these React tells on top.
+**Overlay — load *with* [ts-web.md](./ts-web.md), not instead of it.** Triggered when `react` / `react-dom` is in deps. `ts-web.md` carries the universal layers (transport, domain, server/client state, DTO placement, shared-package, folders); this overlay carries React's **view-logic layer** and the per-lens tells `ts-web.md` defers. Run each spine lens, apply the `ts-web.md` section, then layer these React tells on top.
 
 (Implementation-altitude React tells live in grill-implementation's own `references/stacks/react.md`.)
 
@@ -11,11 +11,11 @@ React's view-logic layer is the **custom hook**. There is no DI container — de
 ## Naming vs responsibility
 
 - **Data-access hook name must signal its mechanism.** A cached, declarative query hook and an imperative one-shot fetch are different contracts — naming them alike (`useGetX` returning a query *and* `useFetchX` returning a bare async thunk, side by side) hides which is which. Divergent fetch idioms across features (most use cached query hooks; one feature hand-rolls `fetch` in a thunk) is the tell.
-- A `use…`-named function with **no React dependency** (no state/effect/context/ref) — it's a pure module wearing a hook costume; move it to the domain layer (`ts.md`) and call it.
+- A `use…`-named function with **no React dependency** (no state/effect/context/ref) — it's a pure module wearing a hook costume; move it to the domain layer (`ts-web.md`) and call it.
 
 ## Layer assignment — the view-logic tells
 
-- **Business logic inline in JSX** (the fat component): branching rules, money/date math, an IIFE computing state inside the render return. Extract to a pure module (`ts.md` domain layer) the component calls — logic the component owns can't be unit-tested without rendering.
+- **Business logic inline in JSX** (the fat component): branching rules, money/date math, an IIFE computing state inside the render return. Extract to a pure module (`ts-web.md` domain layer) the component calls — logic the component owns can't be unit-tested without rendering.
 - **Server state copied into client state via the React idioms:** `onSuccess`/`useEffect(() => setX(data))` syncing query data into `useState`/a store. `onSuccess` fires on *every* background refetch; the copy goes stale. Read from the cache; don't mirror it.
 - **God component** — one component doing fetching + mutation + derivation + orchestration + rendering. Count the hooks it calls, the state pieces it holds, the responsibilities. Split container (orchestration/data) from presentational (props-in/events-out) per Abramov.
 - **Imperative `fetch` in a component or `useEffect`** with manual loading/error booleans — re-implements caching, dedup, and refetch the query layer already gives you.
@@ -31,8 +31,8 @@ React's view-logic layer is the **custom hook**. There is no DI container — de
 
 ## Config and secret flow
 
-- Auth/SDK providers (MSAL, OAuth) composed once at the app root via a shared config factory, not re-instantiated per feature. Env reads go through the validated config module (`ts.md`), not `import.meta.env.X!` scattered in components.
+- Auth/SDK providers (MSAL, OAuth) composed once at the app root via a shared config factory, not re-instantiated per feature. Env reads go through the validated config module (`ts-web.md`), not `import.meta.env.X!` scattered in components.
 
 ## Value-type placement
 
-Covered by `ts.md` (DTO/type home, shared-vs-feature, feature-leak-into-shared). No React-specific tell — say `N/A` unless the slice introduces a React-shaped shared primitive (a context value, a render-prop contract) that has leaked a domain concept.
+Covered by `ts-web.md` (DTO/type home, shared-vs-feature, feature-leak-into-shared). No React-specific tell — say `N/A` unless the slice introduces a React-shaped shared primitive (a context value, a render-prop contract) that has leaked a domain concept.

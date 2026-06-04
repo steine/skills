@@ -8,11 +8,13 @@ Each skill is a stack-agnostic **spine** (its `SKILL.md`) plus per-stack **packs
 
 - The **spine** carries each lens's *principle* — stack-neutral, e.g. "a read should move only what the consumer uses."
 - A **pack** carries the concrete *tells* for one stack — e.g. `.AsNoTracking()` / `[Projectable]` for .NET, `res.json() as T` for TS.
-- Packs **compose** one level deeper for front-ends: a **language pack** (`ts.md`) + a **framework overlay** (`react.md` / `angular.md`), loaded together.
+- Packs **compose** one level deeper for front-ends: a **language pack** (`ts-web.md`) + a **framework overlay** (`react.md` / `angular.md`), loaded together.
 
 Recursion: `spine → language pack → framework overlay`. The spine says *what to check*; the pack says *what it looks like here*.
 
-**Loading.** The spine detects the stack during recon and reads the matching pack(s): `*.csproj`/`*.sln` → `dotnet.md`; `tsconfig.json` / front-end `package.json` → `ts.md` + an overlay (`react` dep → `react.md`, `@angular/core` → `angular.md`); `Gemfile` → `ruby.md`; `go.mod` → `go.md`. A repo spanning back-end + front-end loads two.
+**Loading.** The spine detects the stack during recon and reads the matching pack(s): `*.csproj`/`*.sln` → `dotnet.md`; `tsconfig.json` + front-end markers → `ts-web.md` + an overlay (`react` → `react.md`, `@angular/core` → `angular.md`); `tsconfig.json` + Node-server markers → `ts-node.md`; `Gemfile` → `ruby.md`; `go.mod` → `go.md`. A repo spanning back-end + front-end loads two.
+
+**One language, two stacks.** A "stack" here is `(language × application shape)`, not language alone. Most languages map to one shape (`dotnet` → server, `react` → browser); **TypeScript maps to two** — a browser SPA (`ts-web`, layered presentation→…→shared) and a Node server (`ts-node`, layered like a back-end, closer to `dotnet.md`). They're disambiguated by dependencies (`react`/`vite` vs `@nestjs`/`express`/ORM, DOM or not), and each is a separate stack with its own packs. This is **not** the front-end/back-end tier axis rejected in §3 — it's two stacks that happen to share a language; the shared TS-language tells (`as T`/zod boundary, DTO-vs-domain, `AbortSignal`, env hygiene) are restated across both, same self-containment cost as everywhere else.
 
 ## 2. Two skills, two altitudes
 
@@ -29,17 +31,18 @@ The front-end layering the spine re-anchors onto: `presentation ← view-logic �
 ## 3. ⚠️ Invariants — break these and it ships broken
 
 - **Self-containment.** Each skill owns its OWN `references/stacks/`. A `SKILL.md` reference resolves relative to *that skill's own directory*, loaded on demand; cross-directory references (a sibling skill OR a plugin-root shared dir) are undocumented and **break when the plugin is installed from a marketplace**. Never link `../other-skill/...` or a plugin-root path — only `./references/...`.
-  - **Corollary — do NOT "DRY" the packs.** The `dotnet.md` / `ts.md` tells are *intentionally* restated in both skills (one architecture pack, one implementation pack). The handful of idioms duplicated across the two (e.g. `CancellationToken`, DTO shape) is the accepted cost of self-containment. A single "shared pack" file is the exact bug already removed once — don't reintroduce it.
+  - **Corollary — do NOT "DRY" the packs.** The `dotnet.md` / `ts-web.md` tells are *intentionally* restated in both skills (one architecture pack, one implementation pack). The handful of idioms duplicated across the two (e.g. `CancellationToken`, DTO shape) is the accepted cost of self-containment. A single "shared pack" file is the exact bug already removed once — don't reintroduce it.
 - **Domain-agnostic.** No org / product / system names anywhere — these skills ship to other teams. Evals use fictional `Acme.*`. When a real-world finding motivates a lens, encode the *generic pattern*, never the specific instance.
-- **Taxonomy = stack axis only.** One pack per stack. A front-end/back-end split was considered and rejected: tier equals stack only by org coincidence (mono-stack), it re-binds the skills to one org's stack choices, and it keeps the irreducible per-stack axis underneath anyway.
+- **Taxonomy = stack axis only.** One pack per stack. A front-end/back-end *tier* split was considered and rejected: tier equals stack only by org coincidence (mono-stack), it re-binds the skills to one org's stack choices, and it keeps the irreducible per-stack axis underneath anyway. (Note: `ts-web` vs `ts-node` is **not** a tier axis — it's two distinct stacks that share a language; see §1 "one language, two stacks".)
 - **`N/A` over force-fit.** If a lens doesn't bind to a stack or a slice, say `N/A` with a one-line reason. Don't invent a tell to fill a section.
 
 ## 4. Adding a stack
 
 1. Write **two** files: `grill-architecture/references/stacks/<stack>.md` (architecture lenses) and `grill-implementation/references/stacks/<stack>.md` (implementation lenses). Use `dotnet.md` as the worked reference for both.
 2. Wire **detection** in both `SKILL.md`s — marker file → pack link, using `./references/stacks/...` only.
-3. **Stub-then-fill.** Seed a few real tells per lens, mark `> **Status: stub.**` with `<!-- TODO -->` markers, and fill from real grills before relying on it. `ruby` / `go` are stubs today; `angular` is a stub overlay.
-4. Front-end stack with more than one framework sharing the language? Split into a language pack + framework overlay (see `ts.md` + `react.md` / `angular.md`).
+3. **Stub-then-fill.** Seed a few real tells per lens, mark `> **Status: stub.**` with `<!-- TODO -->` markers, and fill from real grills before relying on it. `ts-node`, `ruby`, `go` are stubs today; `angular` is a stub overlay.
+4. Front-end stack with more than one framework sharing the language? Split into a language pack + framework overlay (see `ts-web.md` + `react.md` / `angular.md`).
+5. Same language, two application shapes (like TS → browser + Node)? Make them **separate stacks** (`ts-web`, `ts-node`), disambiguated by deps in the `SKILL.md` detection block — not a tier flag. Model a back-end shape on `dotnet.md`.
 
 ## 5. How the skills are improved
 

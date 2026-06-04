@@ -1,6 +1,6 @@
 ---
 name: grill-implementation
-description: Implementation-level pressure-test of a single slice's draft before (or just after) writing code. Validates a slice's concrete mechanics against the codebase via composable per-stack packs (.NET + TS/React complete; Angular/Ruby/Go stubs) — reuse of existing affordances, read-path minimalism, interface spec-gaps (cancellation, result/error contract, observability, idempotency), the cross-cutting impact of any type/schema change, cross-boundary contract drift where a front-end re-declares a server DTO by hand, and cross-workspace dependency-graph compatibility. Use at issue-start once the architecture is settled (ADRs/grill-architecture done) and you're about to implement — or on a fresh diff you want vetted before PR. Inherits prior architectural decisions; does not re-litigate naming, folder, layer, or port-shape. Output: a corrected slice plan and a fix-now list. No ADRs.
+description: Implementation-level pressure-test of a single slice's draft before (or just after) writing code. Validates a slice's concrete mechanics against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs) — reuse of existing affordances, read-path minimalism, interface spec-gaps (cancellation, result/error contract, observability, idempotency), the cross-cutting impact of any type/schema change, cross-boundary contract drift where a front-end re-declares a server DTO by hand, and cross-workspace dependency-graph compatibility. Use at issue-start once the architecture is settled (ADRs/grill-architecture done) and you're about to implement — or on a fresh diff you want vetted before PR. Inherits prior architectural decisions; does not re-litigate naming, folder, layer, or port-shape. Output: a corrected slice plan and a fix-now list. No ADRs.
 ---
 
 <what-to-do>
@@ -20,10 +20,13 @@ This skill is **validation**, not discovery. It takes the slice's prescription a
 The lens *principles* below (reuse, read-path minimalism, spec-gaps, impact sweep, contract drift, workspace compat) are **stack-agnostic**. The concrete **tells live in per-stack packs** in this skill's own `references/stacks/` (self-contained — grill-architecture keeps its own architecture-altitude packs separately):
 
 - `*.csproj` / `*.sln` → [references/stacks/dotnet.md](./references/stacks/dotnet.md) — complete
-- `tsconfig.json` / front-end `package.json` → [references/stacks/ts.md](./references/stacks/ts.md) — complete; **compose with a framework overlay**: `react` dep → [react.md](./references/stacks/react.md), `@angular/core` dep → [angular.md](./references/stacks/angular.md)
+- `tsconfig.json` + **front-end** markers (`react`/`@angular/core`/`vue`, Vite/bundler, an `index.html`) → [references/stacks/ts-web.md](./references/stacks/ts-web.md) — complete; **compose with a framework overlay**: `react` dep → [react.md](./references/stacks/react.md), `@angular/core` dep → [angular.md](./references/stacks/angular.md)
+- `tsconfig.json` + **Node server** markers (`@nestjs/*`/`express`/`fastify`/`koa`, a server entry, an ORM like Prisma/TypeORM, **no DOM**) → [references/stacks/ts-node.md](./references/stacks/ts-node.md) — stub
 - `Gemfile` → [references/stacks/ruby.md](./references/stacks/ruby.md) — stub; `go.mod` → [references/stacks/go.md](./references/stacks/go.md) — stub
 
-Detect the stack during recon and **load the matching pack now**; packs compose, so a TS front-end loads `ts.md` *and* its overlay. A slice that spans back-end and front-end may load two packs. If the stack isn't covered, use the .NET pack as the worked example and flag the gap. If a lens doesn't bind to this slice, say so rather than force-fit.
+**TypeScript hosts two stacks** — a browser SPA (`ts-web`) and a Node server (`ts-node`) — so `tsconfig.json` alone is ambiguous; disambiguate by dependencies (markers above).
+
+Detect the stack during recon and **load the matching pack now**; packs compose, so a TS front-end loads `ts-web.md` *and* its overlay. A slice that spans back-end and front-end (or a full-stack TS monorepo) may load two packs. If the stack isn't covered, use the .NET pack as the worked example and flag the gap. If a lens doesn't bind to this slice, say so rather than force-fit.
 
 ## Stay at slice altitude
 
