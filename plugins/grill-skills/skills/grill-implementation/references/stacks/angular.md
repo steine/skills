@@ -2,7 +2,7 @@
 
 > **Status: stub.** Seeded with real tells so the structure is visible, not battle-tested. Fill from real Angular grills before relying on it; mark a tell `N/A` if the app doesn't adopt the pattern.
 
-**Overlay — load *with* [ts.md](./ts.md), not instead of it.** Triggered when `@angular/core` is in deps. `ts.md` carries the universal impl tells; this overlay carries Angular's view-logic slice-mechanics.
+**Overlay — load *with* [ts-web.md](./ts-web.md), not instead of it.** Triggered when `@angular/core` is in deps. `ts-web.md` carries the universal impl tells; this overlay carries Angular's view-logic slice-mechanics.
 
 (Architecture-altitude Angular tells live in grill-architecture's own `references/stacks/angular.md`.)
 

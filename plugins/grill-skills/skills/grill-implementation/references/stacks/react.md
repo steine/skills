@@ -1,6 +1,6 @@
 # Implementation pack overlay: React
 
-**Overlay — load *with* [ts.md](./ts.md), not instead of it.** Triggered when `react` / `react-dom` is in deps. `ts.md` carries the universal impl tells; this overlay carries React's view-logic slice-mechanics. Layer these on top of `ts.md`'s tells.
+**Overlay — load *with* [ts-web.md](./ts-web.md), not instead of it.** Triggered when `react` / `react-dom` is in deps. `ts-web.md` carries the universal impl tells; this overlay carries React's view-logic slice-mechanics. Layer these on top of `ts-web.md`'s tells.
 
 (Architecture-altitude React tells live in grill-architecture's own `references/stacks/react.md`.)
 
