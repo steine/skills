@@ -18,6 +18,12 @@
       "name": "impact-sweep-on-schema-change",
       "prompt": "I'm adding a new persisted column LinkedQuoteRefNo (nullable string) plus a LinkedQuoteName (nullable string) to the Order entity so the inbox can show the linked quote's reference. The column add itself and the migration approach are settled by a prior ADR. Grill the implementation — what else does adding these two properties to Order touch across the Sales codebase that I need to handle in this slice before I open the PR?",
       "files": []
+    },
+    {
+      "id": 3,
+      "name": "cross-boundary-contract-drift-on-vm-change",
+      "prompt": "I'm implementing SAL-204 in the Inbox feature: surface each order's linked quote in the inbox table. On the server I'm adding two fields to the read VM in Acme.Sales.Application/Features/Inbox/OrderVm.cs — `LinkedQuoteName` (string) and `LinkedQuoteCreated` (DateTime). The endpoint already projects from the entity. On the front-end (acme-sales.clientApp, a workspace package) I'll add them to the hand-written type so the table can render them. Here's my draft front-end change:\n\n```ts\n// src/features/inbox/types/Order.ts\n// Mirrors Acme.Sales.Application.Features.Inbox.OrderVm\nexport interface Order {\n  id: string;\n  reference: string;\n  created: Date;            // existing\n  linkedQuoteName: string;\n  linkedQuoteCreated: Date; // new\n}\n\n// src/features/inbox/utils/inbox.api.ts\nexport async function getInbox(): Promise<Order[]> {\n  const res = await fetch(`${base}/api/inbox`, { headers });\n  if (!res.ok) throw new Error('Server error');\n  return (await res.json()) as Order[];\n}\n```\n\nAnd the table will sort by the new date: `rows.sort((a, b) => (a.linkedQuoteCreated < b.linkedQuoteCreated ? 1 : -1))`. Grill the implementation before I open the PR — is the front-end contract change sound?",
+      "files": []
     }
   ]
 }

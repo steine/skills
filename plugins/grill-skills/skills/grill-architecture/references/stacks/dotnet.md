@@ -2,6 +2,8 @@
 
 The grill-architecture spine carries each lens's *principle*; this pack carries the concrete **.NET-idiom tells** and recommendation skew for each lens. Load it when recon detects `*.csproj` / `*.sln`. Apply the matching section as you run each lens.
 
+(Implementation-altitude tells — reuse, read-path minimalism, spec-gaps, impact sweep — live in grill-implementation's own `references/stacks/dotnet.md`.)
+
 Layering vocabulary assumed: `Domain` (entities, value objects, domain services) ← `Application` (feature handlers, ports) ← `Infrastructure` (EF, HTTP adapters, transport). Feature-folder convention under `Application/Features/<Feature>/`.
 
 ## Naming vs responsibility
