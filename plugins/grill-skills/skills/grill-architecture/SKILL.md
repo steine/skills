@@ -34,7 +34,7 @@ Walk these before grilling:
 1. **Existing precedents.** For each external system or cross-cutting pattern in the spec, find any sibling implementation. Note folder, type names, layer split, config shape.
 2. **Folder conventions.** Sample 2–3 existing modules. Feature folders or by-kind buckets? Pick the dominant. (Stack pack has the idiomatic bucket names.)
 3. **Framework idioms.** Identify the framework. Note conventional answers for config flow, DI scope, typed clients, cross-cutting handlers, secret layering.
-4. **Existing ADRs.** Read `docs/adr/`. Do not re-litigate prior decisions.
+4. **Existing ADRs.** Read `docs/adr/`. Don't re-litigate a settled decision — but treat only the named decision and its stated alternatives as binding. Implementation detail an ADR happened to carry along (exact schema, routes, code snippets) is context, not law to defend.
 5. **Responsibility count per type.** For each spec-named type, list its responsibilities (transport / policy / mapping / persistence / etc.). >1 distinct responsibility → tag as first Q to grill.
 6. **Issue-tree scope.** If the spec has a parent issue / epic / project, read it for inherited scope (deferred items, explicit out-of-scope, parent-level ADRs). Cite when auto-resolving via parent scope: "answered upstream by `<parent ref>`."
 
@@ -142,6 +142,8 @@ Lenses turn on facts — does the precedent exist, is the attribute present, is 
 ### Update ADRs inline
 
 When a decision settles and meets the ADR gate, draft the ADR right there. Don't batch.
+
+If it reverses or narrows part of an existing accepted ADR, write a new numbered ADR that names and links the one it changes — don't edit the old file's body to bolt on the correction. Reserve in-place edits for fixing something wrong the day it was written (typo, broken link). Flip the old ADR's `status` to `superseded by ADR-NNNN` only if the new one replaces it wholesale; otherwise leave it `accepted`, with the new ADR linking back to the specific part it changed.
 
 ## Closing the session
 

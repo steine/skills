@@ -22,9 +22,13 @@ Only include these when they add genuine value. Most ADRs won't need them.
 - **Considered Options** — only when the rejected alternatives are worth remembering
 - **Consequences** — only when non-obvious downstream effects need to be called out
 
+## Keep it decisions, not specs
+
+Don't paste code blocks, schema DDL, or exhaustive route/handler listings — the code and its tests already show that, exactly, and won't drift from a prose description the way a pasted-in snapshot will. Name a specific fact only when the fact itself *is* the decision (a column's nullability, an endpoint's verb) — not as illustration of what got built.
+
 ## Numbering
 
-Scan `docs/adr/` for the highest existing number and increment by one.
+Scan `docs/adr/` for the highest existing number and increment by one. Rescan right before merging — a concurrent branch may have already claimed the same number.
 
 ## When to offer an ADR
 
