@@ -141,9 +141,7 @@ Lenses turn on facts — does the precedent exist, is the attribute present, is 
 
 ### Update ADRs inline
 
-When a decision settles and meets the ADR gate, draft the ADR right there. Don't batch.
-
-If it reverses or narrows part of an existing accepted ADR, write a new numbered ADR that names and links the one it changes — don't edit the old file's body to bolt on the correction. Reserve in-place edits for fixing something wrong the day it was written (typo, broken link). Flip the old ADR's `status` to `superseded by ADR-NNNN` only if the new one replaces it wholesale; otherwise leave it `accepted`, with the new ADR linking back to the specific part it changed.
+When a decision settles and looks ADR-worthy, hand it to the `write-adr` skill right there. Don't batch. `write-adr` owns the gate, the format, and superseding existing records — don't draft ADRs outside it.
 
 ## Closing the session
 
@@ -157,12 +155,6 @@ When the grill is done, produce a summary:
 
 ## Offer ADRs sparingly
 
-Offer an ADR only when all three are true:
-
-1. **Hard to reverse** — cost of changing later is meaningful
-2. **Surprising without context** — a future reader will wonder why
-3. **The result of a real trade-off** — genuine alternatives existed
-
-If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](./ADR-FORMAT.md).
+Most settled decisions in a grill are not ADRs. Offer one only for a hard-to-reverse, surprising, genuinely traded-off pick, and let `write-adr` run its gate — if it says no, the decision goes in the revised plan or the PR instead.
 
 </supporting-info>

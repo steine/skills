@@ -41,12 +41,13 @@ grab issue → /grill-implementation → implement → [/grill-implementation on
 
 ## What's in it
 
-One plugin, **grill-skills**, bundling two skills that are a deliberate split of one concern:
+One plugin, **grill-skills**, bundling two grill skills that are a deliberate split of one concern, plus the ADR writer they hand off to:
 
 | Skill | Altitude | When | Output |
 |-------|----------|------|--------|
 | `grill-architecture` | Macro — hard-to-reverse decisions | Refinement, before `to-prd` | Revised plan + **ADRs** |
 | `grill-implementation` | Micro — reversible per-slice mechanics | Sprint, at issue pickup (opt. pre-PR) | **Fix-now list** (no ADRs) |
+| `write-adr` | Recording — one decision per ADR | Whenever an ADR is written, superseded or retired | Short ADR + status changes on the records it replaces |
 
 Both pressure-test against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs). For the internal structure and how to extend it, see [plugins/grill-skills/MAINTAINERS.md](plugins/grill-skills/MAINTAINERS.md).
 
@@ -57,7 +58,7 @@ Both pressure-test against the codebase via composable per-stack packs (.NET + T
 /plugin install grill-skills@steine-skills
 ```
 
-Skills are then invoked namespaced: `/grill-skills:grill-architecture`, `/grill-skills:grill-implementation`.
+Skills are then invoked namespaced: `/grill-skills:grill-architecture`, `/grill-skills:grill-implementation`, `/grill-skills:write-adr`.
 
 ## Update
 

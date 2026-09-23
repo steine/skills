@@ -1,0 +1,29 @@
+{
+  "skill_name": "write-adr",
+  "evals": [
+    {
+      "id": 0,
+      "name": "slice-mechanic-fails-the-gate",
+      "prompt": "We just decided that the order list's status badge should read its label from a lookup in `Acme.Sales.Web/Features/Inbox/StatusLabels.ts` instead of the inline switch it has today. Write an ADR for it in docs/adr/.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "bundled-decision-gets-split",
+      "prompt": "Write an ADR covering what we settled today: Sales will call Fulfillment over synchronous HTTP instead of a message bus, the new `FulfillmentReference` table gets a surrogate Guid key, and the order detail page shows the reference in a new side panel.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "partial-reversal-supersedes-instead-of-amending",
+      "prompt": "docs/adr/0012-order-fields-freeze-after-dispatch.md (accepted) says every shared field on an order group freezes once any member is dispatched, and also records that group edits cascade to every member and that names are capped at 40 characters. We now want only the reference number to freeze; the other fields stay editable after dispatch, and downstream systems catch up. Add an 'Amended by' note to 0012 and write the new ADR.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "integration-choice-passes-the-gate",
+      "prompt": "Decided after a long discussion: Billing will own invoice numbering and Sales will only ever reference invoices by Billing's id — we considered letting Sales pre-allocate numbers to avoid a round-trip but rejected it because Billing must guarantee gap-free sequences for the tax authority. Record it.",
+      "files": []
+    }
+  ]
+}
