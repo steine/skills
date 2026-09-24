@@ -42,9 +42,34 @@ Signals of a bundled record: a Decisions list whose bullets could each be revers
 Decide which case applies and tell the user:
 
 - **New** — nothing accepted covers it.
-- **Replaces an accepted ADR wholesale** — write the new record, and set the old one's frontmatter to `status: superseded by ADR-NNNN`. That status line is the only edit to the old file.
-- **Replaces part of an accepted ADR** — treat this as a smell: the old record bundled decisions. Prefer superseding it wholesale and briefly restating, in the new record or in separate new records, the parts that still hold. Only if that is disproportionate, leave the old one `accepted` and add `superseded-in-part-by: [ADR-NNNN]` to its frontmatter, with the new record naming exactly which of its decisions it replaces.
-- **No longer relevant, nothing replaces it** — `status: deprecated`, with one line saying why.
+- **Replaces an accepted ADR wholesale** — the new record lists it in `supersedes`, and the old one's frontmatter becomes `status: superseded` with `superseded-by` naming the new record (add to the list if it already has successors). Those frontmatter lines are the only edit to the old file.
+- **Replaces part of an accepted ADR** — treat this as a smell: the old record bundled decisions. Prefer superseding it wholesale and restating, in the new record or in separate new records, the parts that still hold. Only if that is disproportionate, the new record lists it in `supersedes-in-part`, and the old one keeps `status: accepted` and gains `superseded-in-part-by`, with the new record naming exactly which of its decisions it replaces.
+- **No longer relevant, nothing replaces it** — `status: deprecated` plus a one-line `reason:`. A deprecated record has no successors: if a new record replaces it, it is superseded, not deprecated. If it describes behaviour that is still true (it failed the gate on re-read, it didn't stop being true), state that behaviour in the glossary, the code or the README where it belongs *before* deprecating — otherwise the only description of live behaviour sits in a retired record.
+
+**Account for every decision you retire.** Whenever a record is superseded or deprecated, list each decision it contains and map it to exactly one of: *restated in ADR-NNNN* · *moved to the glossary / code / README* · *dropped, because …*. A decision that is still true in the code and maps to nothing is orphaned — it now lives only in a retired record. Do this even when the prompt only mentions replacing one of its decisions; bundled records are where decisions get lost. A new record must not cite a retired record as the authority for anything still true — restate it, or cite where it now lives.
+
+**Lineage is frontmatter, not prose.** Use one spelling for references everywhere, `ADR-NNNN` (repo rules may pick another, but then use it everywhere, including `reason:`):
+
+```yaml
+# new record
+status: accepted
+supersedes: [ADR-0010, ADR-0034]        # wholesale replacements
+supersedes-in-part: [ADR-0044]          # only when step 3 allowed it
+
+# old record, wholesale
+status: superseded
+superseded-by: [ADR-0046, ADR-0051]
+
+# old record, in part
+status: accepted
+superseded-in-part-by: [ADR-0060]
+
+# retired, nothing replaces it
+status: deprecated
+reason: a UI affordance, not a decision; described in the glossary
+```
+
+Links in both directions must agree: every record in a new record's `supersedes`/`supersedes-in-part` names it back in `superseded-by`/`superseded-in-part-by`, and the reverse. A body sentence may explain what was replaced, but the frontmatter is what gets checked.
 
 Never edit an accepted record's body to reflect a later change, and never add "Amended by" banners. In-place edits are only for what was wrong on the day it was written — a typo, a broken link. The set of accepted records should read as the current truth without following chains.
 
@@ -53,6 +78,7 @@ Never edit an accepted record's body to reflect a later change, and never add "A
 ```md
 ---
 status: proposed
+supersedes: [ADR-NNNN]   # omit when nothing is replaced
 ---
 
 # {The decision, stated as a claim}
@@ -77,7 +103,7 @@ status: proposed
 - **Status.** Draft as `proposed`. Set `accepted` only after the user has confirmed the decision.
 - **Numbering.** Highest existing number plus one, unless the repo says otherwise. Rescan right before merging — a concurrent branch may have taken it. Never renumber or rename after merge.
 
-If the repo has a glossary that restates the decision (or the one it replaces), update the fact there and repoint its citation. The glossary states current behaviour; it must not keep a claim the new record just reversed.
+If the repo has a glossary that restates the decision (or the one it replaces or retires), update the fact there and repoint its citation. The glossary states current behaviour; it must not keep a claim the new record just reversed, nor cite a record that is no longer accepted.
 
 ## 5. Self-review before showing it
 
@@ -91,8 +117,10 @@ Check the draft against each anti-pattern and fix before presenting:
 | **Sprint / Dummy alternative** | Alternatives are ones someone would actually propose — or the section is omitted with good reason. |
 | **Sales pitch** | No unsupported superlatives; claims are factual. |
 | **Stale neighbour** | Every accepted record this one contradicts is superseded or marked in part. |
+| **Orphaned decision** | Every decision in each superseded or deprecated record is restated, moved to the glossary/code/README, or explicitly dropped with a reason. |
+| **One-way link** | `supersedes` and `superseded-by` (and their in-part forms) agree in both directions; no deprecated record is named as superseded. |
 
-Then show the user the draft, the relation outcome from step 3 (which files change status), and the glossary edits, in one message. Write nothing until they confirm.
+Then show the user, in one message: the draft, the relation outcome from step 3 (which files change status, with their new frontmatter), the decision map for every record being retired, and the glossary edits. Write nothing until they confirm.
 
 ## Sources
 

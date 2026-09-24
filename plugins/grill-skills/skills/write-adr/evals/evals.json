@@ -24,6 +24,24 @@
       "name": "integration-choice-passes-the-gate",
       "prompt": "Decided after a long discussion: Billing will own invoice numbering and Sales will only ever reference invoices by Billing's id — we considered letting Sales pre-allocate numbers to avoid a round-trip but rejected it because Billing must guarantee gap-free sequences for the tax authority. Record it.",
       "files": []
+    },
+    {
+      "id": 4,
+      "name": "wholesale-supersede-accounts-for-every-decision",
+      "prompt": "docs/adr/0021-billing-owns-invoice-currency.md (accepted) records three things: Billing owns the invoice currency field; outbound invoice features go behind flags resolved once per request into a snapshot; and feature flags are kept separate from long-lived settings. We now want Sales to pass the currency through instead of Billing owning it. Write the new ADR and mark 0021 superseded by it.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "split-into-two-successors-uses-list-frontmatter-both-ways",
+      "prompt": "docs/adr/0008-order-sync.md (accepted) bundles two decisions: orders sync to Fulfillment over synchronous HTTP, and a failed sync blocks the order from being shipped. Both still hold. Split it into two one-decision records and retire 0008.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "deprecating-still-true-behaviour-moves-it-to-the-glossary",
+      "prompt": "docs/adr/0014-order-list-remembers-filter.md (accepted) says the order list remembers each user's last status filter in the browser and starts empty when nothing is stored. On re-read it's a UI affordance, not an architectural decision, but the behaviour is still live. The repo has a CONTEXT.md glossary. Deprecate 0014.",
+      "files": []
     }
   ]
 }
