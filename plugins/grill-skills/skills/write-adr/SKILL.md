@@ -45,6 +45,7 @@ Decide which case applies and tell the user:
 - **Replaces an accepted ADR wholesale** — the new record lists it in `supersedes`, and the old one's frontmatter becomes `status: superseded` with `superseded-by` naming the new record (add to the list if it already has successors). Those frontmatter lines are the only edit to the old file.
 - **Replaces part of an accepted ADR** — treat this as a smell: the old record bundled decisions. Prefer superseding it wholesale and restating, in the new record or in separate new records, the parts that still hold. Only if that is disproportionate, the new record lists it in `supersedes-in-part`, and the old one keeps `status: accepted` and gains `superseded-in-part-by`, with the new record naming exactly which of its decisions it replaces.
 - **Narrows where an accepted rule applies, replacing none of it** — an exception, not a supersession: nothing in the rule stopped being true. The new record lists the rule in `exception-to`, the rule gains `exceptions` naming the new record, and both stay `accepted`. Don't use `superseded-in-part-by` for this — it claims part of the rule is dead — and don't leave the link one-way, or a reader of the rule never finds the exception. Avoid calling it "amends": that suggests the decision itself changed.
+- **Makes a consequence of an accepted record false, while its decision still holds** — the old record's decision is untouched, but a consequence it lists (a cost, a side effect, a "today this means…") stops being true. That is neither a supersession nor an exception, so don't claim part of the decision died. The new record lists it in `changes-consequences-of` and says in its body which consequence it changes; the old one gains `consequences-changed-by`, and both stay `accepted`. Without the link, a reader of the old record keeps trusting a consequence that is no longer true.
 - **No longer relevant, nothing replaces it** — `status: deprecated` plus a one-line `reason:`. A deprecated record has no successors: if a new record replaces it, it is superseded, not deprecated. If it describes behaviour that is still true (it failed the gate on re-read, it didn't stop being true), state that behaviour in the glossary, the code or the README where it belongs *before* deprecating — otherwise the only description of live behaviour sits in a retired record.
 
 **Account for every decision you retire.** Whenever a record is superseded or deprecated, list each decision it contains and map it to exactly one of: *restated in ADR-NNNN* · *moved to the glossary / code / README* · *dropped, because …*. A decision that is still true in the code and maps to nothing is orphaned — it now lives only in a retired record. Do this even when the prompt only mentions replacing one of its decisions; bundled records are where decisions get lost. A new record must not cite a retired record as the authority for anything still true — restate it, or cite where it now lives.
@@ -69,12 +70,16 @@ superseded-in-part-by: [ADR-0060]
 exception-to: [ADR-0001]      # on the exception
 exceptions: [ADR-0082]        # on the rule
 
+# a consequence of an accepted record stops being true (both stay accepted)
+changes-consequences-of: [ADR-0050]   # on the new record
+consequences-changed-by: [ADR-0085]   # on the old record
+
 # retired, nothing replaces it
 status: deprecated
 reason: a UI affordance, not a decision; described in the glossary
 ```
 
-Links in both directions must agree: every record in a new record's `supersedes`/`supersedes-in-part`/`exception-to` names it back in `superseded-by`/`superseded-in-part-by`/`exceptions`, and the reverse. A body sentence may explain what was replaced, but the frontmatter is what gets checked.
+Links in both directions must agree: every record in a new record's `supersedes`/`supersedes-in-part`/`exception-to`/`changes-consequences-of` names it back in `superseded-by`/`superseded-in-part-by`/`exceptions`/`consequences-changed-by`, and the reverse. A body sentence may explain what was replaced, but the frontmatter is what gets checked.
 
 Never edit an accepted record's body to reflect a later change, and never add "Amended by" banners. In-place edits are only for what was wrong on the day it was written — a typo, a broken link. The set of accepted records should read as the current truth without following chains.
 
@@ -116,14 +121,14 @@ Check the draft against each anti-pattern and fix before presenting:
 
 | Anti-pattern | Check |
 |---|---|
-| **Mega-ADR / Maze** | One decision, one topic. No detail dump the code already shows. |
+| **Mega-ADR / Maze** | One decision, one topic. No detail dump the code already shows, and no UI placement, affordances or logging/observability mechanics — those belong to the ticket, the code and the PR. |
 | **Blueprint or policy in disguise** | Reads as a decision journal, not a manual or a law. |
 | **Fairy tale / Free lunch** | Consequences include real costs. |
 | **Sprint / Dummy alternative** | Alternatives are ones someone would actually propose — or the section is omitted with good reason. |
 | **Sales pitch** | No unsupported superlatives; claims are factual. |
-| **Stale neighbour** | Every accepted record this one contradicts is superseded or marked in part. |
+| **Stale neighbour** | Every accepted record this one contradicts is superseded, marked in part, or — when only a consequence it lists becomes false — linked through `changes-consequences-of`. |
 | **Orphaned decision** | Every decision in each superseded or deprecated record is restated, moved to the glossary/code/README, or explicitly dropped with a reason. |
-| **One-way link** | `supersedes`/`superseded-by`, their in-part forms, and `exception-to`/`exceptions` agree in both directions; no deprecated record is named as superseded. |
+| **One-way link** | `supersedes`/`superseded-by`, their in-part forms, `exception-to`/`exceptions` and `changes-consequences-of`/`consequences-changed-by` agree in both directions; no deprecated record is named as superseded. |
 
 Then show the user, in one message: the draft, the relation outcome from step 3 (which files change status, with their new frontmatter), the decision map for every record being retired, and the glossary edits. Write nothing until they confirm.
 

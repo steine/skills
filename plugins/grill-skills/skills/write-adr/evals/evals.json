@@ -48,6 +48,18 @@
       "name": "scoped-exception-is-a-two-way-link-not-a-partial-supersede",
       "prompt": "docs/adr/0003-behaviour-lives-on-entities.md (accepted) says entity-owned logic lives in instance methods. For the new reporting read models we want plain property-bag classes with no behaviour, because they're mapped by two ORMs — everywhere else 0003 still holds. Record the decision and mark 0003 superseded-in-part by it.",
       "files": []
+    },
+    {
+      "id": 8,
+      "name": "consequence-becomes-false-links-both-ways",
+      "prompt": "docs/adr/0030-orders-sync-to-fulfillment.md (accepted) decides that Sales writes to Fulfillment only over its HTTP API. Its Consequences say: 'A failed sync is logged and the order still saves; the nightly import reconciles it.' We've now decided a failed sync marks the order as out of sync in Fulfillment and shows it to the user instead. The HTTP decision itself still holds. Record the new decision.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "name": "ui-and-logging-detail-stays-out-of-the-record",
+      "prompt": "Record this decision: when a payment provider call fails after the order is committed, we mark the order 'payment pending' instead of failing the request. Include that the mark shows as a yellow badge on the order list and in the order drawer with a 'Try again' button next to it, that every failure writes a row to the audit log with the provider's error code, and that the badge tooltip says 'Payment not confirmed yet'.",
+      "files": []
     }
   ]
 }

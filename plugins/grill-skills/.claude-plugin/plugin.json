@@ -1,6 +1,6 @@
 {
   "name": "grill-skills",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Architectural and implementation pressure-testing skills, split by altitude, plus an ADR writer.",
   "author": {
     "name": "Anders Steinrud",
