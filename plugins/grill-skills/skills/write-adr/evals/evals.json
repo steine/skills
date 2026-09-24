@@ -42,6 +42,12 @@
       "name": "deprecating-still-true-behaviour-moves-it-to-the-glossary",
       "prompt": "docs/adr/0014-order-list-remembers-filter.md (accepted) says the order list remembers each user's last status filter in the browser and starts empty when nothing is stored. On re-read it's a UI affordance, not an architectural decision, but the behaviour is still live. The repo has a CONTEXT.md glossary. Deprecate 0014.",
       "files": []
+    },
+    {
+      "id": 7,
+      "name": "scoped-exception-is-a-two-way-link-not-a-partial-supersede",
+      "prompt": "docs/adr/0003-behaviour-lives-on-entities.md (accepted) says entity-owned logic lives in instance methods. For the new reporting read models we want plain property-bag classes with no behaviour, because they're mapped by two ORMs — everywhere else 0003 still holds. Record the decision and mark 0003 superseded-in-part by it.",
+      "files": []
     }
   ]
 }
