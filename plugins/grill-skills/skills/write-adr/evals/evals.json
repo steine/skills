@@ -60,6 +60,24 @@
       "name": "ui-and-logging-detail-stays-out-of-the-record",
       "prompt": "Record this decision: when a payment provider call fails after the order is committed, we mark the order 'payment pending' instead of failing the request. Include that the mark shows as a yellow badge on the order list and in the order drawer with a 'Try again' button next to it, that every failure writes a row to the audit log with the provider's error code, and that the badge tooltip says 'Payment not confirmed yet'.",
       "files": []
+    },
+    {
+      "id": 10,
+      "name": "restating-sentence-updates-a-link-instead-of-superseding",
+      "prompt": "docs/adr/0030-orders-lock-once-shipped.md (accepted) decides that an order is locked for edits once it has shipped. Its decision paragraph also says: \"Two actions use narrower locks: cancellation (ADR 0033) and address correction (ADR 0035).\" We are now reversing 0035, so address corrections are allowed on shipped orders too. Record the reversal of 0035. 0030's own decision, the shipped-order lock, is unchanged. The repo has a CONTEXT.md glossary.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "name": "superseding-sweeps-inbound-citations-and-leaves-citers-alone",
+      "prompt": "Supersede docs/adr/0041-invoices-are-numbered-per-legal-entity.md with a new record: invoice numbers stay per legal entity, but the series now also resets every fiscal year. docs/adr/0044-credit-notes-share-the-invoice-series.md (accepted) says in its body that credit notes take their number from the invoice series defined in ADR 0041. The repo has a CONTEXT.md glossary.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "name": "unnumbered-sentence-change-still-supersedes",
+      "prompt": "docs/adr/0052-exports-run-nightly.md (accepted) says: \"We will run the data export nightly at 02:00, and skip weekends because nobody reads the reports then.\" We now want exports on weekends too. Update the record so it no longer skips weekends.",
+      "files": []
     }
   ]
 }

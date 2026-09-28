@@ -46,9 +46,12 @@ Decide which case applies and tell the user:
 - **Replaces part of an accepted ADR** — treat this as a smell: the old record bundled decisions. Prefer superseding it wholesale and restating, in the new record or in separate new records, the parts that still hold. Only if that is disproportionate, the new record lists it in `supersedes-in-part`, and the old one keeps `status: accepted` and gains `superseded-in-part-by`, with the new record naming exactly which of its decisions it replaces.
 - **Narrows where an accepted rule applies, replacing none of it** — an exception, not a supersession: nothing in the rule stopped being true. The new record lists the rule in `exception-to`, the rule gains `exceptions` naming the new record, and both stay `accepted`. Don't use `superseded-in-part-by` for this — it claims part of the rule is dead — and don't leave the link one-way, or a reader of the rule never finds the exception. Avoid calling it "amends": that suggests the decision itself changed.
 - **Makes a consequence of an accepted record untrue, while its decision still holds** — nothing is superseded and the old record is not touched. An accepted record's *decision* is what stays in force; its consequences record what was expected when it was written. As Nygard puts it, the consequences of one ADR become the context for later ones: the new record says in its Context which earlier consequence no longer holds, citing that record, and the current behaviour is stated in the glossary, which is where a reader should look for it.
+- **Makes a restating sentence in an accepted record untrue, while its own decision still holds** — the sentence names another record by number and restates *that* record's decision (a narrower rule, an exception, a sibling). It is a cross-reference, not part of this record's decision: nothing is superseded and the body is not touched. Update the frontmatter link instead, e.g. add the new record to the rule's `exceptions`. The test is mechanical: if a successor's "We will …" sentence would be identical to the old one, don't supersede. A sentence that doesn't name the other record by number is part of the decision, and changing it means superseding.
 - **No longer relevant, nothing replaces it** — `status: deprecated` plus a one-line `reason:`. A deprecated record has no successors: if a new record replaces it, it is superseded, not deprecated. If it describes behaviour that is still true (it failed the gate on re-read, it didn't stop being true), state that behaviour in the glossary, the code or the README where it belongs *before* deprecating — otherwise the only description of live behaviour sits in a retired record.
 
-**Account for every decision you retire.** Whenever a record is superseded or deprecated, list each decision it contains and map it to exactly one of: *restated in ADR-NNNN* · *moved to the glossary / code / README* · *dropped, because …*. A decision that is still true in the code and maps to nothing is orphaned — it now lives only in a retired record. Do this even when the prompt only mentions replacing one of its decisions; bundled records are where decisions get lost. A new record must not cite a retired record as the authority for anything still true — restate it, or cite where it now lives.
+**Sweep inbound citations first.** Before superseding or deprecating a record, grep the ADR folder and the glossary for its number. For each accepted record that cites it, name the decision the citation relies on and where that decision lives after the retirement. Do this while drafting, not at review. A citer whose decision nothing restates is stranded: restate that decision, or treat the citing record as affected too.
+
+**Account for every decision you retire.** Whenever a record is superseded or deprecated, list each decision it contains and map it to exactly one of: *restated in ADR-NNNN* · *moved to the glossary / code / README* · *dropped, because …*. A decision that is still true in the code and maps to nothing is orphaned — it now lives only in a retired record. Do this even when the prompt only mentions replacing one of its decisions; bundled records are where decisions get lost. A new record must not cite a retired record as the authority for anything still true — restate it, or cite where it now lives. An accepted record that already cites the one you retire is not edited: its citation resolves through `superseded-by` and stays valid while the successor restates the cited decision, which is what the sweep checks.
 
 **Lineage is frontmatter, not prose.** Use one spelling for references everywhere, `ADR-NNNN` (repo rules may pick another, but then use it everywhere, including `reason:`):
 
@@ -75,7 +78,7 @@ status: deprecated
 reason: a UI affordance, not a decision; described in the glossary
 ```
 
-Links in both directions must agree: every record in a new record's `supersedes`/`supersedes-in-part`/`exception-to` names it back in `superseded-by`/`superseded-in-part-by`/`exceptions`, and the reverse. A body sentence may explain what was replaced, but the frontmatter is what gets checked.
+Links in both directions must agree: every record in a new record's `supersedes`/`supersedes-in-part`/`exception-to` names it back in `superseded-by`/`superseded-in-part-by`/`exceptions`, and the reverse. A body sentence may explain what was replaced, but the frontmatter is what gets checked. Where body prose describing a relation ("a sibling of", "not a loosening of") disagrees with the frontmatter, the frontmatter wins; the prose is context as of writing and isn't edited.
 
 Never edit an accepted record's body to reflect a later change, and never add "Amended by" banners. In-place edits are only for what was wrong on the day it was written — a typo, a broken link. The set of accepted records should give the decisions currently in force without following chains; current behaviour belongs in the glossary.
 
@@ -103,7 +106,7 @@ supersedes: [ADR-NNNN]   # omit when nothing is replaced
 ```
 
 - **Length.** Aim for well under a page. A single paragraph is a valid ADR. Going past a page needs a reason — a genuinely wicked problem — not thoroughness.
-- **Decisions, not specs.** No code blocks, schema DDL, route/handler/file listings, test names, migration steps, or Added/Changed/Removed changelogs — the code, its tests and the PR carry those exactly and won't drift. Name a concrete identifier only when the identifier itself *is* the decision (a column's nullability, an endpoint's verb, which system owns a record).
+- **Decisions, not specs.** No code blocks, schema DDL, route/handler/file listings, test names, migration steps, or Added/Changed/Removed changelogs — the code, its tests and the PR carry those exactly and won't drift. Name a concrete identifier only when the identifier itself *is* the decision (a column's nullability, an endpoint's verb, which system owns a record). No roster of which other records narrow, extend or depend on this one either: those relations are frontmatter, and the current list is the glossary's.
 - **Domain language.** If the repo has a glossary, use its terms and avoid the synonyms it rules out.
 - **Journal voice.** Record what was decided and why, as a team would tell it. Avoid a rulebook tone of "must" and "never" unless the constraint itself is the decision.
 - **Status.** Draft as `proposed`. Set `accepted` only after the user has confirmed the decision.
@@ -122,11 +125,15 @@ Check the draft against each anti-pattern and fix before presenting:
 | **Fairy tale / Free lunch** | Consequences include real costs. |
 | **Sprint / Dummy alternative** | Alternatives are ones someone would actually propose — or the section is omitted with good reason. |
 | **Sales pitch** | No unsupported superlatives; claims are factual. |
-| **Stale neighbour** | Every accepted record whose *decision* this one contradicts is superseded or marked in part. An earlier record whose consequence no longer holds is cited in this record's Context instead, and the glossary states the current behaviour. |
+| **Stale neighbour** | Every accepted record whose *decision* this one contradicts is superseded or marked in part. An earlier record whose consequence no longer holds is cited in this record's Context instead, and the glossary states the current behaviour. A restating sentence that names this record's predecessor by number is a cross-reference: its frontmatter link is updated, and the record is not superseded. |
 | **Orphaned decision** | Every decision in each superseded or deprecated record is restated, moved to the glossary/code/README, or explicitly dropped with a reason. |
+| **Neighbour roster** | The decision doesn't list other records' decisions. If a later change to one of them would make this record untrue, the list belongs in frontmatter or the glossary. |
+| **Stranded citer** | Every accepted record citing a record being retired relies on a decision that a successor restates, or is handled too. |
 | **One-way link** | `supersedes`/`superseded-by`, their in-part forms, and `exception-to`/`exceptions` agree in both directions; no deprecated record is named as superseded. |
 
-Then show the user, in one message: the draft, the relation outcome from step 3 (which files change status, with their new frontmatter), the decision map for every record being retired, and the glossary edits. Write nothing until they confirm.
+If the repo has an ADR lint script, run it and fix what it reports.
+
+Then show the user, in one message: the draft, the relation outcome from step 3 (which files change status, with their new frontmatter), the inbound-citation map and the decision map for every record being retired, and the glossary edits. Write nothing until they confirm.
 
 ## Sources
 
