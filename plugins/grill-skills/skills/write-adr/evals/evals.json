@@ -78,6 +78,12 @@
       "name": "unnumbered-sentence-change-still-supersedes",
       "prompt": "docs/adr/0052-exports-run-nightly.md (accepted) says: \"We will run the data export nightly at 02:00, and skip weekends because nobody reads the reports then.\" We now want exports on weekends too. Update the record so it no longer skips weekends.",
       "files": []
+    },
+    {
+      "id": 13,
+      "name": "lagging-door-stays-out-of-the-record",
+      "prompt": "We decided every endpoint that can create a shipment must check the carrier allow-list before committing. The web checkout and the bulk CSV import already check it; the partner webhook doesn't yet, and is only safe because partners currently ship with one carrier. Write the ADR in docs/adr/. The repo has a CONTEXT.md glossary with an Implementation status section.",
+      "files": []
     }
   ]
 }
