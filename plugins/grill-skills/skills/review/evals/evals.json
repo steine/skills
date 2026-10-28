@@ -60,6 +60,12 @@
       "name": "layout-is-per-axis-without-no-problem-text",
       "prompt": "Here's code-review's output for my branch for ACME-910 ('Show delivery ETA on the order page'). Standards: no documented-standard breaches; AGENTS.md comment rule followed; naming matches siblings; nit — `etaText` is built with string concatenation where the codebase uses a formatter helper. Spec: met — ETA shown on the order page; met — ETA hidden for cancelled orders; met — loading state; missing — the issue asks for the ETA in the customer's time zone, the code renders server time; the fix is passing the existing `customerTimeZone` into the formatter, one line. Present it.",
       "files": []
+    },
+    {
+      "id": 10,
+      "name": "allowed-nits-stay-off-a-teammates-pr",
+      "prompt": "Here's code-review's output for PR 412 by a teammate, for ACME-955 ('Export invoices as CSV'). Standards: judgement call — possible Duplicated Code, the header row is built in two places; nit — `rows` could be `invoiceRows`; nit — an `as any` cast on the parsed amount, and honestly that cast shows up in almost every PR. Spec: met — CSV download from the invoice list; met — date range filter. Present it and tell me what to post on the PR.",
+      "files": []
     }
   ]
 }

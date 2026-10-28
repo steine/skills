@@ -106,7 +106,12 @@ Keep the axes apart so the reader stays in one kind of problem at a time: all of
 **Next** depends on whose change it is:
 
 - **Your own branch** — offer to apply the fix-now items. Anything the user accepts as a known limit goes into a ready-to-paste *Limits* section for the PR description.
-- **Someone else's PR** — fix-now items and proposed tickets go in the review comment. Direction-level ideas (a different overall approach, a shared abstraction elsewhere) go in a **separate** comment marked non-blocking, so they read as context rather than added scope. The author owns their issue and PR; whether to accept a proposal, and any tracker updates, are theirs. If the PR is already merged, fix-now items become a fix-up PR. Confirm with the user before posting anything.
+- **Someone else's PR** — fix-now items and proposed tickets go in the review comment. Direction-level ideas (a different overall approach, a shared abstraction elsewhere) go in a **separate** comment marked non-blocking, so they read as context rather than added scope. The author owns their issue and PR; whether to accept a proposal, and any tracker updates, are theirs. If the PR is already merged, fix-now items become a fix-up PR. Never push fixes to the author's branch yourself. Confirm with the user before posting anything.
+
+Either way, **allowed findings stay off the PR** — no review comment, no line in the PR description. Allow means it can go in as it is, and every posted nit is a thread someone has to answer. Two exceptions:
+
+- **The user asks for them.** On your own branch, apply them. On someone else's PR, draft one comment listing them, marked optional with no reply needed — never one comment per nit.
+- **The user says a finding keeps recurring across PRs.** It's a missing rule, not a nit: propose a lint rule or a line in the agent instruction file, which makes it a documented standard, instead of a comment.
 
 ## 6. Feed misses back to the grill
 
