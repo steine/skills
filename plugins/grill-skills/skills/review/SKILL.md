@@ -84,25 +84,33 @@ Keep the axes apart so the reader stays in one kind of problem at a time: all of
 - **P1** <finding, one line>. `<file:line>`
   → **Fix now:** <what to change>
   → **Your call:** <option A>, or ticket "<title>"
-- **P2** <finding, one line>. `<file:line>` · [thread](<link>)
+- **P2** <finding, one line>. `<file:line>` ([thread](<link>))
   → **Verify first:** <check>. <outcome if X → recommendation>; <outcome if Y → recommendation>.
 
 **Dropped:** <id> <finding> (<reason or thread link>) · …
 
 # Next
-**Fix now:** <ids, Standards first, joined by ` · `>
-**Verify first:** <ids> (<the check>)
-**Your call:** <ids>
+**Fix now**
+- **S2** <the change, one line>
+- **P1** <the change, one line>
+
+**Verify first**
+- **P2** <the check, one line>
+
+**Your call**
+- **P3** <the decision, one line>
+  → **Fix now:** <option A>
+  → **Ticket:** "<title>"
 
 <what happens next — see below>
 ```
 
 - **The axis heading is only the axis name** — no verdict or counts under it; Next carries the totals. An axis with no findings at all is the heading plus "No findings."
-- **One line per finding**, plus a `file:line` or thread link. A finding with no `→` line is allowed — don't print *Allow*. Add a short reason in parentheses only when allowing something the issue asked for. *Fix now*, *Verify first*, *Your call* and a proposed *Ticket* go on indented `→` lines.
+- **One line per finding**, plus a `file:line`, with any thread link in parentheses after it. A finding with no `→` line is allowed — don't print *Allow*. Add a short reason in parentheses only when allowing something the issue asked for. *Fix now*, *Verify first*, *Your call* and a proposed *Ticket* go on indented `→` lines.
 - **Emit the template as rendered markdown**, not inside a code block, and never as tables — tables squeeze the finding text and push the recommendation out of reading order. Each axis is the only top-level heading, so the reader sees where one kind of problem ends and the next begins; no `---` rules, they add clutter. The review title stays a bold line so it doesn't compete with the axes.
 - **Cut "no problem" text.** No met requirements, passing standards, "done well" notes or scope checks that found nothing — only findings and their recommendations.
 - **Dropped findings** close their own axis in one line, each with its reason, so the reader can see nothing went missing. Leave the line out when the axis dropped nothing.
-- **Next** is its own section after both axes — it's about the whole review, not one axis. Its action list holds ids only, no bullets; leave out a group with no ids, and if all three are empty the line is "**Fix now:** nothing". The reasons and exact changes stay on the findings; Next only points to them.
+- **Next** is its own section after both axes — it's about the whole review, not one axis. It lists the same way the axes do: a bold group label, then one bullet per id, Standards first. Each bullet says in one line what to do: the change for *Fix now*, the check for *Verify first*, the decision for *Your call*, with that decision's options on indented `→` lines. Reasons stay on the findings. Leave out a group with no ids, and if all three are empty the section is "**Fix now:** nothing".
 - Notes on how this skill or `code-review` performed don't belong in the review. Raise them separately if at all.
 
 **Next** depends on whose change it is:
