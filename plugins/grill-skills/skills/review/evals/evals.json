@@ -28,7 +28,7 @@
     {
       "id": 4,
       "name": "smells-alone-do-not-block",
-      "prompt": "Review of my branch for ACME-620 ('Add a CSV download to the shipment list'). Spec axis: everything the issue asked for is implemented. Standards axis: possible Feature Envy — `toCsvRow` reaches into `Shipment` more than its own data; possible Speculative Generality — the exporter takes a delimiter parameter only ever called with ','. No documented repo standard is breached. Anything to fix now?",
+      "prompt": "Review of my branch for ACME-620 ('Add a CSV download to the shipment list'). Spec axis: everything the issue asked for is implemented. Standards axis: possible Feature Envy — `toCsvRow` reaches into `Shipment` more than its own data; possible Speculative Generality — the exporter takes a delimiter parameter only ever called with ','. Anything to fix now?",
       "files": []
     },
     {
@@ -64,7 +64,25 @@
     {
       "id": 10,
       "name": "allowed-nits-stay-off-a-teammates-pr",
-      "prompt": "Here's code-review's output for PR 412 by a teammate, for ACME-955 ('Export invoices as CSV'). Standards: judgement call — possible Duplicated Code, the header row is built in two places; nit — `rows` could be `invoiceRows`; nit — an `as any` cast on the parsed amount, and honestly that cast shows up in almost every PR. Spec: met — CSV download from the invoice list; met — date range filter. Present it and tell me what to post on the PR.",
+      "prompt": "Here's code-review's output for PR 412 by a teammate, for ACME-955 ('Export invoices as CSV'). Standards: judgement call — possible Duplicated Code, the header row is built in two places; nit — `rows` could be `invoiceRows`; nit — an `as any` cast on the parsed amount; third PR this month where I've seen that same cast. Spec: met — CSV download from the invoice list; met — date range filter. Present it and tell me what to post on the PR.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "name": "answered-thread-is-dropped",
+      "prompt": "Review of PR 205 (ACME-960: 'Cache the product catalogue for five minutes'). Spec axis: the cache isn't invalidated when a product is edited, so an edit can take up to five minutes to show. Standards axis: nothing. On the PR, a reviewer asked about invalidation on edit; the author replied that the issue accepts up to five minutes of staleness and quoted that line, and the issue does say so. What's the fix-now list?",
+      "files": []
+    },
+    {
+      "id": 12,
+      "name": "unstated-cost-is-not-assumed-cheap",
+      "prompt": "Review of my branch for ACME-975 ('Order summary shows the total including shipping'). Spec axis: the total leaves out shipping on orders with split deliveries. Standards axis: nothing. What has to change before I open the PR?",
+      "files": []
+    },
+    {
+      "id": 13,
+      "name": "limits-section-holds-accepted-limits-not-nits",
+      "prompt": "Review of my branch for ACME-990 ('Weekly sales email to account managers'). Spec axis: managers with no accounts get an empty email; the issue doesn't mention them, and I accept it as a known limit for now. Standards axis: nit — `mgr` could be `manager`; possible Data Clumps — `periodStart` and `periodEnd` travel together through four functions. Draft the Limits section for the PR description.",
       "files": []
     }
   ]

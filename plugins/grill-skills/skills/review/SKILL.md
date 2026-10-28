@@ -1,6 +1,6 @@
 ---
 name: review
-description: "Review a finished implementation — your own branch before opening the PR, or someone else's PR. Runs the `code-review` skill (standards + spec, from Matt Pocock's suite), then presents the findings per axis with a recommendation on each — fix now, allow, verify first, or your call — so it's clear what to fix before the change goes in. Use when finalizing a branch before the PR, reviewing a teammate's PR, or when the user asks what still has to change."
+description: "Review a finished implementation — your own branch before opening the PR, or someone else's PR. Runs the `code-review` skill (standards + spec), checks its findings against the code and the PR discussion, then presents them per axis with a recommendation on each — fix now, allow, verify first, or your call — so it's clear what to fix before the change goes in. Use when finalizing a branch before the PR, reviewing a teammate's PR, or when the user asks what still has to change or whether it can merge. Prefer this over invoking `code-review` directly whenever the user wants to know what to do about the findings, not just what they are."
 ---
 
 <what-to-do>
@@ -19,12 +19,14 @@ Look for the repo's own review rules: anything in the agent instruction files (`
 
 ## 1. Pin what's under review
 
-- **Your own branch** (the default): the fixed point is the merge-base with the main branch, unless the user names another. Uncommitted changes count — ask the user to commit or stash them, or review them alongside.
+- **Your own branch** (the default): the fixed point is the merge-base with the main branch, unless the user names another. Uncommitted changes count, but `code-review` only sees commits — ask the user to commit them, or stash them to leave them out.
 - **Someone else's PR**: don't check it out over the user's work. Fetch its head as a ref (on GitHub, `git fetch origin pull/<n>/head:refs/remotes/pr/<n>`) and review `<base>...pr/<n>`. Read the PR description and the whole discussion: conversation comments, submitted reviews, and inline review threads, resolved ones included. On GitHub, `gh pr view <n> --comments` covers the first two; inline threads and their resolved state need the API, e.g. the GraphQL `reviewThreads` connection.
 
 ## 2. Run the review
 
-Invoke the `code-review` skill with that fixed point and follow its process through both sub-agents and the two-axis report. If it isn't available, stop and tell the user it comes from [mattpocock/skills](https://github.com/mattpocock/skills).
+If the user already supplies `code-review`'s output, start at step 3.
+
+Otherwise invoke the `code-review` skill with that fixed point and follow its process through both sub-agents and the two-axis report. For someone else's PR, `pr/<n>` stands in for `HEAD` in its diff and log commands. If `code-review` isn't available, stop and tell the user it comes from [mattpocock/skills](https://github.com/mattpocock/skills).
 
 Do **not** present `code-review`'s aggregate. Its two-axis report and closing summary are input to steps 3–5; step 5's layout replaces them.
 
@@ -32,7 +34,7 @@ Do **not** present `code-review`'s aggregate. Its two-axis report and closing su
 
 Sub-agents can be wrong, and a fix-now tag costs real work. Before tagging:
 
-- **Check against the code** any finding that would be fix-now: confirm the behaviour it claims. Drop it if the code says otherwise.
+- **Check against the code** every Spec finding and every breach of a documented standard — anything that could end up more than *Allow*: confirm the behaviour it claims. Drop it if the code says otherwise.
 - **Check against what's already written** — the issue, the commit messages, and the PR description if there is one. Drop a finding they refute (an "unannounced" change that is announced, a path reported as verified).
 - **Check against the PR discussion.** Match each finding to any comment or thread that already raised it, and show the link next to the finding:
   - *Answered* — a reply explains why it isn't a problem, and the code bears that out → drop it, citing the thread.
@@ -43,8 +45,6 @@ Sub-agents can be wrong, and a fix-now tag costs real work. Before tagging:
 - **Keep** a finding that's merely acknowledged as a known limit. Writing a gap down doesn't close it; it still gets a recommendation.
 - **Hold** a finding when the code and the written record disagree — the code supports it, but the PR description or a thread reports the opposite as tested. Neither wins; it becomes *Verify first* in step 4.
 
-These checks can drop or hold a finding, never add one. Say which findings you dropped and why, in one line each.
-
 ## 4. Give every finding one recommendation
 
 - **Fix now** — the finding falls within the issue's stated purpose **and** the fix is cheap. This includes:
@@ -52,8 +52,10 @@ These checks can drop or hold a finding, never add one. Say which findings you d
   - a breach of a documented repo standard;
   - a claim the change makes false — in a README, a runbook, a PR description. A list that's merely incomplete isn't false.
 
+  *Cheap* means it fits in this change without a new design decision or a separate piece of work. When the findings don't say what the fix costs, estimate it from the code; if you still can't tell, it's *Your call*.
+
   "The failure is unlikely", "rare in practice" and "strictly better than before" are **not** reasons to downgrade. If it's in purpose and cheap, it's fixed now.
-- **Allow** — the default, left unmarked in the output: let it into the codebase as it is: judgement calls, baseline smells, naming, helper shape, a known limit nothing can fix (say why). When it's a real gap outside the issue's purpose, add a proposed ticket: title and one-line scope.
+- **Allow** — the default: let it into the codebase as it is: judgement calls, baseline smells, naming, helper shape, a known limit nothing can fix (say why). When it's a real gap outside the issue's purpose, add a proposed ticket: title and one-line scope.
 - **Verify first** — a held finding from step 3. Name the one check that settles it and what the recommendation becomes either way.
 - **Your call** — in purpose but not cheap. Lay out the two options — fix now, or cut it into a ticket (proposed title) — and don't decide it yourself.
 
@@ -92,7 +94,7 @@ Keep the axes apart so the reader stays in one kind of problem at a time: all of
 **Verify first:** <ids> (<the check>)
 **Your call:** <ids>
 
-<one or two lines — see below>
+<what happens next — see below>
 ```
 
 - **The axis heading is only the axis name** — no verdict or counts under it; Next carries the totals. An axis with no findings at all is the heading plus "No findings."
@@ -100,22 +102,24 @@ Keep the axes apart so the reader stays in one kind of problem at a time: all of
 - **Emit the template as rendered markdown**, not inside a code block, and never as tables — tables squeeze the finding text and push the recommendation out of reading order. Each axis is the only top-level heading, so the reader sees where one kind of problem ends and the next begins; no `---` rules, they add clutter. The review title stays a bold line so it doesn't compete with the axes.
 - **Cut "no problem" text.** No met requirements, passing standards, "done well" notes or scope checks that found nothing — only findings and their recommendations.
 - **Dropped findings** close their own axis in one line, each with its reason, so the reader can see nothing went missing. Leave the line out when the axis dropped nothing.
-- **Next** is its own section after both axes — it's about the whole review, not one axis. It opens with the action list: one line per group (*Fix now*, *Verify first*, *Your call*), finding ids only, Standards ids before Spec ids, joined by ` · ` — no bullets. Leave out a group with no ids; if all three are empty, the line is "**Fix now:** nothing". The reasons and exact changes stay on the findings; Next only points to them.
+- **Next** is its own section after both axes — it's about the whole review, not one axis. Its action list holds ids only, no bullets; leave out a group with no ids, and if all three are empty the line is "**Fix now:** nothing". The reasons and exact changes stay on the findings; Next only points to them.
 - Notes on how this skill or `code-review` performed don't belong in the review. Raise them separately if at all.
 
 **Next** depends on whose change it is:
 
-- **Your own branch** — offer to apply the fix-now items. Anything the user accepts as a known limit goes into a ready-to-paste *Limits* section for the PR description.
+- **Your own branch** — offer to apply the fix-now items. Anything the user accepts as a known limit, with its proposed ticket if it has one, goes into a *Limits* section for the PR description.
 - **Someone else's PR** — fix-now items and proposed tickets go in the review comment. Direction-level ideas (a different overall approach, a shared abstraction elsewhere) go in a **separate** comment marked non-blocking, so they read as context rather than added scope. The author owns their issue and PR; whether to accept a proposal, and any tracker updates, are theirs. If the PR is already merged, fix-now items become a fix-up PR. Never push fixes to the author's branch yourself. Confirm with the user before posting anything.
 
-Either way, **allowed findings stay off the PR** — no review comment, no line in the PR description. Allow means it can go in as it is, and every posted nit is a thread someone has to answer. Two exceptions:
+Either way, **a plain *Allow* stays off the PR** — one with no proposed ticket that the user hasn't accepted as a known limit gets no review comment and no line in the PR description. Allow means it can go in as it is, and every posted nit is a thread someone has to answer. Two exceptions:
 
 - **The user asks for them.** On your own branch, apply them. On someone else's PR, draft one comment listing them, marked optional with no reply needed — never one comment per nit.
 - **The user says a finding keeps recurring across PRs.** It's a missing rule, not a nit: propose a lint rule or a line in the agent instruction file, which makes it a documented standard, instead of a comment.
 
+Anything to post — review comments, a *Limits* section, a fix-up PR plan — comes after the review, drafted ready to paste.
+
 ## 6. Feed misses back to the grill
 
-After the review, not inside it: for each *Fix now* finding that `grill-implementation` should have caught before any code was written — a spec gap, a vacuous check, a contract left unstated — ask whether its lenses cover the pattern. If they don't, offer to open an issue on this plugin's repository (the `repository` in its `plugin.json`) so the miss lands as a lens change instead of being fixed one PR at a time.
+After the review, not inside it: for each *Fix now* finding that `grill-implementation` should have caught before any code was written — a spec gap, a vacuous check, a contract left unstated — ask whether its lenses cover the pattern. If they don't, offer to open an issue on this skill's repository, https://github.com/steine/skills, so the miss lands as a lens change instead of being fixed one PR at a time.
 
 - **Generic only.** The repository is public and its skills stay domain-agnostic: describe the pattern with fictional `Acme.*` names, never the user's org, product, ticket ids or code.
 - **The user's own account.** Open it with whatever `gh` account the user is signed in with, and name that account in the confirmation.
