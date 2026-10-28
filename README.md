@@ -33,23 +33,25 @@ grab PBI → /grill-with-docs → /grill-architecture* → /to-prd → /to-issue
 ### Sprint / implementation → per slice, per dev
 
 ```
-grab issue → /grill-implementation → implement → [/grill-implementation on the diff] → PR
+grab issue → /grill-implementation → implement → [/grill-implementation on the diff] → /review → PR
 ```
 
 - **`grill-implementation`** ← *micro lenses.* At issue pickup, once the architecture is settled, vet the slice's concrete mechanics — reuse of existing affordances, read-path minimalism, spec-gaps, impact sweep, cross-boundary contract drift.
+- **`review`** ← *finish line.* Before opening the PR (or when reviewing someone else's), wraps Matt's `code-review` (standards + spec) and presents its findings per axis with a recommendation on each — fix now, allow, verify first, or your call — so an in-scope gap isn't shipped as "non-blocking".
 
 
 ## What's in it
 
-One plugin, **grill-skills**, bundling two grill skills that are a deliberate split of one concern, plus the ADR writer they hand off to:
+One plugin, **grill-skills**, bundling two grill skills that are a deliberate split of one concern, the ADR writer they hand off to, and a review wrapper for the finished implementation:
 
 | Skill | Altitude | When | Output |
 |-------|----------|------|--------|
 | `grill-architecture` | Macro — hard-to-reverse decisions | Refinement, before `to-prd` | Revised plan + **ADRs** |
 | `grill-implementation` | Micro — reversible per-slice mechanics | Sprint, at issue pickup (opt. pre-PR) | **Fix-now list** (no ADRs) |
 | `write-adr` | Recording — one decision per ADR | Whenever an ADR is written, superseded or retired | Short ADR + status changes on the records it replaces |
+| `review` | Finish line — what the change must still fix | Before opening the PR, or reviewing someone else's | Per-axis findings, each with a **fix now / allow** recommendation |
 
-Both pressure-test against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs). For the internal structure and how to extend it, see [plugins/grill-skills/MAINTAINERS.md](plugins/grill-skills/MAINTAINERS.md).
+The two grills pressure-test against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs). For the internal structure and how to extend it, see [plugins/grill-skills/MAINTAINERS.md](plugins/grill-skills/MAINTAINERS.md).
 
 ## Install
 
@@ -58,7 +60,9 @@ Both pressure-test against the codebase via composable per-stack packs (.NET + T
 /plugin install grill-skills@steine-skills
 ```
 
-Skills are then invoked namespaced: `/grill-skills:grill-architecture`, `/grill-skills:grill-implementation`, `/grill-skills:write-adr`.
+Skills are then invoked namespaced: `/grill-skills:grill-architecture`, `/grill-skills:grill-implementation`, `/grill-skills:write-adr`, `/grill-skills:review`.
+
+`review` needs `code-review` from [mattpocock/skills](https://github.com/mattpocock/skills) installed.
 
 ## Update
 

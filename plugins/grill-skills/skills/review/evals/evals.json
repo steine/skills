@@ -1,0 +1,65 @@
+{
+  "skill_name": "review",
+  "evals": [
+    {
+      "id": 0,
+      "name": "replacement-that-can-silently-shrink-is-fixed-now",
+      "prompt": "Here's the two-axis review of PR 41 (issue ACME-210: 'Automated crawl of every page in the admin menu — replaces the manual admin click-through checklist'). Spec axis: (a) nothing asserts that the admin section is present in the menu the crawl reads; if the test user loses admin rights the crawl only visits the public pages and still passes. Fix would be one assertion in the setup step. (b) footer links are skipped. Standards axis: a selector constant is named `textContent` although it holds a CSS selector. The PR description lists 'if the menu endpoint breaks, the whole run fails' under Limits. What has to change?",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "acknowledged-limit-still-gets-a-disposition",
+      "prompt": "Review summary for my branch for ACME-305 ('Nightly export of every open order to the warehouse'), before I open the PR. Spec axis: orders created between the export query and the file upload are missed until the next night. I was going to list that under 'Known limits' in the PR description. The fix is to filter on a snapshot timestamp taken before the query — a two-line change. Standards axis: nothing. Can I open the PR?",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "refuted-finding-is-dropped-not-tagged",
+      "prompt": "Reviewers came back on PR 77 (ACME-412: 'Share the console-error collector between the checkout and the admin smoke tests'). Standards axis: moving the collector changed the checkout test's error messages (they now include the source URL) and the PR doesn't announce it. Spec axis: no gaps. The PR description says: 'Console errors now include the resource URL, so a 404 says which resource failed.' What do we need to fix?",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "expensive-in-purpose-gap-becomes-a-split-decision",
+      "prompt": "Two-axis review of my branch for ACME-501 ('Invoices show the customer's VAT number on every page'). Spec axis: credit notes reuse the invoice template but render through a separate legacy PDF pipeline, so they still lack the VAT number; adding it there means porting that pipeline's layout engine, about a week. Standards axis: one duplicated date-format helper. What's the call before I open the PR?",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "smells-alone-do-not-block",
+      "prompt": "Review of my branch for ACME-620 ('Add a CSV download to the shipment list'). Spec axis: everything the issue asked for is implemented. Standards axis: possible Feature Envy — `toCsvRow` reaches into `Shipment` more than its own data; possible Speculative Generality — the exporter takes a delimiter parameter only ever called with ','. No documented repo standard is breached. Anything to fix now?",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "merged-pr-fix-now-becomes-fix-up-pr",
+      "prompt": "PR 133 (ACME-702: 'Retry failed webhook deliveries three times') was merged yesterday. The review found the retry loop never runs for timeouts because they throw a different exception type than the one it catches — a one-line catch change. Standards axis: nothing. What now?",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "wrapper-does-not-add-findings",
+      "prompt": "Here's the two-axis review of my branch for ACME-815 ('Automated smoke test of every report page — replaces the manual report checklist'). Standards axis: one helper named `data` that holds a CSS selector. Spec axis: the HTTP, console and content checks are all present; no gaps found. Last week a different review run on an earlier version of this branch also mentioned that nothing checks the report section is present in the page list. Give me the fix-now list.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "code-and-record-disagree-is-verify-first",
+      "prompt": "Review of PR 150 (ACME-830: 'Crawl every page in the partner portal'). Spec axis: the content selector for the legacy billing app is `.body > #app`, but the billing layout nests `#app` inside `.row > .col`, so the selector can't match and the billing page's content check can never pass. The PR description says: 'Verified on staging: all 31 pages pass, including billing; with billing's scripts blocked, billing fails on main content.' Standards axis: nothing. What's the fix-now list?",
+      "files": []
+    },
+    {
+      "id": 8,
+      "name": "earlier-punt-in-a-thread-does-not-close-a-fix-now-gap",
+      "prompt": "Review PR 162 (ACME-841: 'Nightly job replaces the manual stock reconciliation'). Spec axis: the job reconciles only warehouses returned by the inventory API and never checks that the main warehouse is among them; a one-line guard would fix it. Standards axis: a magic number 500 for the batch size. On the PR, an inline thread on the API call has a reviewer comment 'should we assert the main warehouse is present?' and the author replied 'good idea, follow-up' and resolved it. Another comment asks the author to add retry on 429s, which neither review axis mentions. What's the fix-now list?",
+      "files": []
+    },
+    {
+      "id": 9,
+      "name": "layout-is-per-axis-without-no-problem-text",
+      "prompt": "Here's code-review's output for my branch for ACME-910 ('Show delivery ETA on the order page'). Standards: no documented-standard breaches; AGENTS.md comment rule followed; naming matches siblings; nit — `etaText` is built with string concatenation where the codebase uses a formatter helper. Spec: met — ETA shown on the order page; met — ETA hidden for cancelled orders; met — loading state; missing — the issue asks for the ETA in the customer's time zone, the code renders server time; the fix is passing the existing `customerTimeZone` into the formatter, one line. Present it.",
+      "files": []
+    }
+  ]
+}
