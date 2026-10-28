@@ -22,6 +22,13 @@
       "prompt": "Small slice: a new endpoint GetQuoteName(Guid quoteId) that returns the display name for one quote, for a tooltip. Here's my draft, which reuses the existing derivation:\n\n```csharp\npublic class GetQuoteName\n{\n    public record Query(Guid QuoteId) : IRequest<string>;\n\n    public class Handler(IAppDbContext dbContext) : IRequestHandler<Query, string>\n    {\n        public async Task<string> Handle(Query request, CancellationToken cancellationToken)\n        {\n            return await dbContext.Quotes\n                .Where(q => q.Id == request.QuoteId)\n                .Select(q => QuoteVm.ProjectFrom(q).QuoteName)\n                .FirstOrDefaultAsync(cancellationToken)\n                ?? throw new NotFoundException(nameof(Quote), request.QuoteId);\n        }\n    }\n}\n```\n\nWhile you're at it: I know the quote-name / date-span string is computed in a few places (OrderVm.LinkedQuoteName, QuoteVm.QuoteName, and the frontend). Grill the implementation of this slice.",
       "files": [],
       "trap": "The slice itself is correct and minimal — it reuses QuoteVm.QuoteName, projects, has CT and a not-found guard. The user dangles a real codebase-wide consolidation opportunity (the quote-name string is derived in 2-3 divergent places). A good run keeps the slice as-is, and records 'consolidate the N quote-name derivations behind one affordance' as a PUNTED-UP item for improve-codebase-architecture — explicitly NOT expanding this slice to do the cross-codebase refactor. Failure = ballooning the slice into a multi-file unification, or grilling the other call sites as if they were in scope."
+    },
+    {
+      "id": 3,
+      "name": "empty-list-is-a-legitimate-result",
+      "prompt": "About to add GET /api/orders/{customerId}/open to Acme.Sales: returns the customer's open orders as a list of `OpenOrderVm`, an empty list when there are none. The handler is a projected EF query with `AsNoTracking()` and takes the request's CancellationToken. Grill it.",
+      "files": [],
+      "trap": "Vacuous success must not fire: the endpoint produces data, not a verdict, and an empty list is the correct answer when a customer has no open orders. Mark the lens N/A instead of demanding a non-empty floor."
     }
   ]
 }

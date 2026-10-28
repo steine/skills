@@ -30,6 +30,15 @@ The grill-implementation spine carries each lens's *principle*; this pack carrie
 - Cleanup of subscriptions / effects on unmount.
 - Framework return-shape / hook-contract gaps → **overlay**.
 
+## Vacuous success
+
+- Tests generated from a runtime list — `for (const x of list) test(...)`, `test.each(list)` — where the list is discovered (a menu, an API response, a file): fewer or zero tests still give a green run. Assert the floor where the list is produced.
+- `[].every(...)` is `true`; `expect(items.filter(isBroken)).toEqual([])` passes when `items` is empty.
+- Locators loose enough to match the broken page: long `.or(...)` chains, `hasText: /\S/`, `.first()` on a broad selector — an empty-state message or inline error satisfies them.
+- `toHaveCount(0)` / `not.toBeVisible()` as the only assertion — passes when the page never rendered.
+- `test.skip(condition)` or an early `return` that fires in CI when a precondition is missing.
+- A `catch {}` around an assertion helper or a setup step.
+
 ## Impact sweep + contract drift
 
 - The **hand-mirrored server DTO** (the `// Mirrors <Vm>` type) updated in lockstep with the server change — the `res.json() as T` cast hides drift. (Full lens: the SKILL's *Cross-boundary contract drift*.)

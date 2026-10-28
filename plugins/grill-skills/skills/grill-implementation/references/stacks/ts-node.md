@@ -31,6 +31,13 @@ Load when recon detects `tsconfig.json` + Node-server deps (`@nestjs/*` / `expre
 - Idempotency / dedupe on state-changing endpoints, and behaviour under retry. <!-- TODO -->
 - Transaction boundary for multi-write operations. <!-- TODO -->
 
+## Vacuous success
+
+- `describe.each` / `test.each` over a list loaded at runtime — an empty list runs nothing and passes. <!-- TODO -->
+- A health endpoint answering ok when its dependency list is empty, or catching a probe error into ok. <!-- TODO -->
+- `Promise.allSettled` results never inspected for rejections. <!-- TODO -->
+- A job that reports success after processing zero records, with no floor. <!-- TODO -->
+
 ## Impact sweep + contract drift (producer side)
 
 - Factories / fixtures / seeders constructing the entity. <!-- TODO -->

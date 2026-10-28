@@ -1,6 +1,6 @@
 ---
 name: grill-implementation
-description: "Implementation-level pressure-test of a single slice's draft before (or just after) writing code. Validates a slice's concrete mechanics against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs) — reuse of existing affordances, read-path minimalism, interface spec-gaps (cancellation, result/error contract, observability, idempotency), the cross-cutting impact of any type/schema change, cross-boundary contract drift where a front-end re-declares a server DTO by hand, and cross-workspace dependency-graph compatibility. Use at issue-start once the architecture is settled (ADRs/grill-architecture done) and you're about to implement — or on a fresh diff you want vetted before PR. Inherits prior architectural decisions; does not re-litigate naming, folder, layer, or port-shape. Output: a corrected slice plan and a fix-now list. No ADRs."
+description: "Implementation-level pressure-test of a single slice's draft before (or just after) writing code. Validates a slice's concrete mechanics against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs) — reuse of existing affordances, read-path minimalism, interface spec-gaps (cancellation, result/error contract, observability, idempotency), vacuous success (a test, check or job that can pass without checking what it claims), the cross-cutting impact of any type/schema change, cross-boundary contract drift where a front-end re-declares a server DTO by hand, and cross-workspace dependency-graph compatibility. Use at issue-start once the architecture is settled (ADRs/grill-architecture done) and you're about to implement — or on a fresh diff you want vetted before PR. Inherits prior architectural decisions; does not re-litigate naming, folder, layer, or port-shape. Output: a corrected slice plan and a fix-now list. No ADRs."
 ---
 
 <what-to-do>
@@ -17,7 +17,7 @@ This skill is **validation**, not discovery. It takes the slice's prescription a
 
 ## Stack packs
 
-The lens *principles* below (reuse, read-path minimalism, spec-gaps, impact sweep, contract drift, workspace compat) are **stack-agnostic**. The concrete **tells live in per-stack packs** in this skill's own `references/stacks/` (self-contained — grill-architecture keeps its own architecture-altitude packs separately):
+The lens *principles* below (reuse, read-path minimalism, spec-gaps, vacuous success, impact sweep, contract drift, workspace compat) are **stack-agnostic**. The concrete **tells live in per-stack packs** in this skill's own `references/stacks/` (self-contained — grill-architecture keeps its own architecture-altitude packs separately):
 
 - `*.csproj` / `*.sln` → [references/stacks/dotnet.md](./references/stacks/dotnet.md) — complete
 - `tsconfig.json` + **front-end** markers (`react`/`@angular/core`/`vue`, Vite/bundler, an `index.html`) → [references/stacks/ts-web.md](./references/stacks/ts-web.md) — complete; **compose with a framework overlay**: `react` dep → [react.md](./references/stacks/react.md), `@angular/core` dep → [angular.md](./references/stacks/angular.md)
@@ -87,6 +87,16 @@ A read should move only the fields/rows the consumer uses — **volume, not shap
 For each interface or type the slice defines — including any this grill introduces — check the gaps a spec almost always omits, because they're costly to retrofit once callers exist: cancellation, exception/error contract, ambient state (clock), exhaustive result/outcome types, resource disposal, observability, idempotency. The pack carries the stack's concrete checklist (the idiom for each gap). → **Pack: *Spec-gap checklist*.**
 
 When a question introduces a new type the spec didn't name, run this checklist against it before moving on — the gap won't surface on its own, precisely because the spec never anticipated the type.
+
+### Vacuous success
+
+When the slice produces a verdict — a test, a smoke or health check, a validation, a job that reports success, an alert rule — ask whether it can report success without having checked what it claims to check. Specs list what a check asserts; they almost never say what happens when the thing to check isn't there, so this gap ships green and is found late, if at all. Three shapes:
+
+- **Shrinking input** — the cases come from something discovered at runtime (a menu, a directory listing, a query, config) that can come back smaller or empty, and the check then quietly covers less. When the check *replaces* something (a manual checklist, an old monitor), it must assert the floor it is meant to cover — named members or a minimum count — and fail when that floor isn't met.
+- **Swallowed failure** — a skip, catch, early return or default that turns "couldn't check" into "fine".
+- **Oracle too weak to fail** — an assertion loose enough that the broken state satisfies it too: any text, any element, a count ≥ 0. Name one realistic broken state and confirm the assertion rejects it.
+
+A slice whose verdict guards or replaces something puts these on the fix-now list; they're one-line guards now and invisible later. `N/A` when the slice produces no verdict, or when empty is a legitimate success (a list endpoint returning `[]`). → **Pack: *Vacuous success*.**
 
 ### Cross-cutting impact sweep
 

@@ -30,6 +30,15 @@ The grill-implementation spine carries each lens's *principle*; this pack carrie
 - Observability surface (`ILogger<T>`, metrics, traces) the type needs.
 - Idempotency / dedupe semantics for state-changing operations.
 
+## Vacuous success
+
+- `Enumerable.All(...)` (or `!Any(failed)`) over a collection that can be empty — `true` on empty.
+- xUnit `[Theory]` fed by `[MemberData]` / `[ClassData]` from a query or discovery: assert the source's floor in its own `[Fact]`, so a shrunken source fails instead of running fewer cases.
+- `catch { }` / `catch (Exception) { return HealthCheckResult.Healthy(); }` in a check or job — "couldn't check" reads as healthy.
+- A background or reconciliation job that logs "completed" after processing 0 items, with no floor on the processed count.
+- An early `return` on a missing precondition instead of `Skip` — the test reports as passed.
+- Assertions any outcome satisfies: `Assert.NotNull(result)` on a non-nullable, `Assert.True(items.Count >= 0)`.
+
 ## Impact sweep
 
 - Factories and test fixtures that construct the entity.

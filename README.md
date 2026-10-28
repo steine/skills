@@ -36,7 +36,7 @@ grab PBI → /grill-with-docs → /grill-architecture* → /to-prd → /to-issue
 grab issue → /grill-implementation → implement → [/grill-implementation on the diff] → /review → PR
 ```
 
-- **`grill-implementation`** ← *micro lenses.* At issue pickup, once the architecture is settled, vet the slice's concrete mechanics — reuse of existing affordances, read-path minimalism, spec-gaps, impact sweep, cross-boundary contract drift.
+- **`grill-implementation`** ← *micro lenses.* At issue pickup, once the architecture is settled, vet the slice's concrete mechanics — reuse of existing affordances, read-path minimalism, spec-gaps, vacuous success, impact sweep, cross-boundary contract drift.
 - **`review`** ← *finish line.* Before opening the PR (or when reviewing someone else's), wraps Matt's `code-review` (standards + spec) and presents its findings per axis with a recommendation on each — fix now, allow, verify first, or your call — so an in-scope gap isn't shipped as "non-blocking".
 
 

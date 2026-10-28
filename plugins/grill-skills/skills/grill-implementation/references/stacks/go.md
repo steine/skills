@@ -5,4 +5,5 @@
 - **Reuse:** an open-coded helper duplicating an existing package function / method. <!-- TODO -->
 - **Read-path:** `SELECT *` / full-row scan when few columns are used; loading a slice to read one field. <!-- TODO -->
 - **Spec-gap:** **`context.Context` first param** on every boundary call; `(T, error)` with wrapped errors; sentinel/typed not-found vs transport failure; idempotency. <!-- TODO -->
+- **Vacuous success:** table-driven tests over a slice loaded at runtime (empty → no subtests, green); `if err != nil { return nil }` in a check; `t.Skip` on a missing env var that fires in CI. <!-- TODO -->
 - **Impact sweep:** constructors/test fixtures, struct-literal call sites, mappers, migration, seed data. <!-- TODO -->
