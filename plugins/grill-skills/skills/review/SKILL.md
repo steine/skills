@@ -108,4 +108,12 @@ Keep the axes apart so the reader stays in one kind of problem at a time: all of
 - **Your own branch** — offer to apply the fix-now items. Anything the user accepts as a known limit goes into a ready-to-paste *Limits* section for the PR description.
 - **Someone else's PR** — fix-now items and proposed tickets go in the review comment. Direction-level ideas (a different overall approach, a shared abstraction elsewhere) go in a **separate** comment marked non-blocking, so they read as context rather than added scope. The author owns their issue and PR; whether to accept a proposal, and any tracker updates, are theirs. If the PR is already merged, fix-now items become a fix-up PR. Confirm with the user before posting anything.
 
+## 6. Feed misses back to the grill
+
+After the review, not inside it: for each *Fix now* finding that `grill-implementation` should have caught before any code was written — a spec gap, a vacuous check, a contract left unstated — ask whether its lenses cover the pattern. If they don't, offer to open an issue on this plugin's repository (the `repository` in its `plugin.json`) so the miss lands as a lens change instead of being fixed one PR at a time.
+
+- **Generic only.** The repository is public and its skills stay domain-agnostic: describe the pattern with fictional `Acme.*` names, never the user's org, product, ticket ids or code.
+- **The user's own account.** Open it with whatever `gh` account the user is signed in with, and name that account in the confirmation.
+- **Confirm first.** Show the title and body; open nothing without a yes.
+
 </supporting-info>
