@@ -76,7 +76,7 @@ Produce:
 
 1. **Goal** — the ask in one to three sentences of domain language: who, what changes, why.
 2. **Scope** — in; out (the explicit no's); constraints.
-3. **Stories** — each with a one-line title and its numbered acceptance criteria.
+3. **Stories** — each with a one-line title, its numbered acceptance criteria, and where it sits in delivery order: which stories it needs first, or that it stands alone. Every story gets that line, not just the ones with a dependency — the order is what the team plans the sprint from.
 4. **Glossary changes** — terms added to or changed in the glossary.
 5. **Open stakeholder questions** — each with your recommended answer.
 6. **Parked** — split into *for grill-architecture* and *for grill-implementation*.
