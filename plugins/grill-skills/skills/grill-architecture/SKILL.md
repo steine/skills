@@ -37,7 +37,7 @@ Walk these before grilling:
 4. **Existing ADRs.** Read `docs/adr/`. Don't re-litigate a settled decision — but treat only the named decision and its stated alternatives as binding. Implementation detail an ADR happened to carry along (exact schema, routes, code snippets) is context, not law to defend.
 5. **Responsibility count per type.** For each spec-named type, list its responsibilities (transport / policy / mapping / persistence / etc.). >1 distinct responsibility → tag as first Q to grill.
 6. **Issue-tree scope.** If the spec has a parent issue / epic / project, read it for inherited scope (deferred items, explicit out-of-scope, parent-level ADRs). Cite when auto-resolving via parent scope: "answered upstream by `<parent ref>`."
-7. **Parked questions and story split.** If the feature carries questions `grill-feature` parked for architecture (often in an architecture section), each is a candidate Q — put it on the slate, or say why it doesn't bind. Read its stories too: the decisions here are tested against them, and may re-cut them.
+7. **Parked questions and story split.** If the feature carries questions `grill-feature` parked for architecture (often in an architecture section), each is a candidate Q — put it on the slate, or say why it doesn't bind. Read its draft story split too: the decisions here are tested against it, and may re-cut it.
 
 Recon is agent-internal. Surface it in the preamble as **one-liner bullets** — topic + load-bearing fact per bullet (sources read, precedents verified, ADR state, entity/lookup facts that drive auto-resolves). Drop prose connectives, non-load-bearing paths, redundant qualifiers; keep only facts an auto-resolve or a Q recommendation will cite. Reserve detailed precedents (file paths, code excerpts) for the Q that consumes them.
 
@@ -152,8 +152,8 @@ When the grill is done, produce a summary:
 2. **Settled decisions indexed back to question numbers**
 3. **Divergences from the source issue** — for tracker update
 4. **ADRs landed** — list with one-line summary each
-5. **Story split changes** — if the feature was split into stories, the re-cuts the decisions force (an enabling story added, stories that must ship together merged or linked), and each story's cross-system dependencies. Edit the split directly; don't send it back to `grill-feature`.
-6. **Offer next step** — draft the settled decisions and ADR links into the feature (its architecture section, if the template has one) and the dependencies into each story, rewrite the issue body, or stop. Show what changes and get a yes before editing tickets.
+5. **Story split changes** — if the feature carries a draft story split, the re-cuts the decisions force (an enabling story added, stories that must ship together merged or linked), and each story's cross-system dependencies. Edit the split directly; don't send it back to `grill-feature`.
+6. **Offer next step** — draft the settled decisions and ADR links into the feature (its architecture section, if the template has one). If it carries a draft story split, the split is now settled: create one ticket per story under the feature — from the team's story template if it has one — with its acceptance criteria, parked implementation questions and dependencies, and mark the draft on the feature as superseded by them. Otherwise rewrite the issue body, or stop. Show what you'll write and create, and get a yes before touching the tracker.
 
 ## Offer ADRs sparingly
 

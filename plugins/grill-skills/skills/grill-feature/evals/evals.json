@@ -62,7 +62,8 @@
         "Proposes a re-cut into stories that each deliver user-observable value end to end",
         "Every drafted acceptance criterion is observable by the customer or an operator, none checks internal state (stored fields, flags, computed dates)",
         "Does not grill or decide architecture (endpoint design, schema, data model) while re-cutting",
-        "Does not draft or offer an ADR"
+        "Does not draft or offer an ADR",
+        "Drafts the story split onto the feature ticket and does not create or offer to create story tickets before grill-architecture has settled the split"
       ]
     },
     {
@@ -75,7 +76,8 @@
         "Splits it into stories by outcome a user can accept, not by department, team or system area",
         "Gives each proposed story its own acceptance criteria",
         "States the order or dependencies between the proposed stories",
-        "Keeps open stakeholder questions separate from parked technical questions"
+        "Keeps open stakeholder questions separate from parked technical questions",
+        "Drafts the story split onto the feature ticket and does not create or offer to create story tickets before grill-architecture has settled the split"
       ]
     },
     {

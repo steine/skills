@@ -1,6 +1,6 @@
 ---
 name: grill-feature
-description: "Feature-level pressure-test of a stakeholder ask, the first step of refinement. Fleshes out what is asked and why, pins scope (in, and explicitly out), splits the feature into user stories by user value and drafts testable acceptance criteria per story, in the project's domain language. Runs a grilling session with the domain-modeling skill, but stays in the problem space: architecture questions (layers, type names, ports, config, transport) are parked for grill-architecture and implementation questions (reuse, queries, error contracts, tests) for grill-implementation. Use when a backlog item or stakeholder request needs fleshing out before grill-architecture. Output: goal, scope, story split with acceptance criteria, glossary updates, open stakeholder questions and parked questions, drafted into the tracker's templates. No ADRs."
+description: "Feature-level pressure-test of a stakeholder ask, the first step of refinement. Fleshes out what is asked and why, pins scope (in, and explicitly out), splits the feature into user stories by user value and drafts testable acceptance criteria per story, in the project's domain language. Runs a grilling session with the domain-modeling skill, but stays in the problem space: architecture questions (layers, type names, ports, config, transport) are parked for grill-architecture and implementation questions (reuse, queries, error contracts, tests) for grill-implementation. Use when a backlog item or stakeholder request needs fleshing out before grill-architecture. Output: goal, scope, story split with acceptance criteria, glossary updates, open stakeholder questions and parked questions, drafted onto the feature ticket. No ADRs."
 ---
 
 <what-to-do>
@@ -48,7 +48,7 @@ For each story, draft acceptance criteria. Each one observable by someone using 
 - a criterion that restates the story or the goal instead of saying how to check it
 - a happy path with no criterion for the edge cases the scenarios surfaced
 
-The split is a draft. `grill-architecture` may re-cut it — an enabling story a decision requires, two stories that must ship together — and it edits the split directly rather than sending it back here.
+The split is a draft. `grill-architecture` may re-cut it — an enabling story a decision requires, two stories that must ship together — and it edits the split directly rather than sending it back here, then creates the story tickets.
 
 ## Stay in the problem space
 
@@ -81,6 +81,8 @@ Produce:
 5. **Open stakeholder questions** — each with your recommended answer.
 6. **Parked** — split into *for grill-architecture* and *for grill-implementation*.
 
-Then offer to draft it into the tracker. If the team has templates, fill their sections rather than this list's shape: goal, scope and parked architecture questions go on the feature (an architecture section, if it has one, takes the parked list); each story becomes its own ticket under the feature, from the story template, with its acceptance criteria and any parked implementation questions. Show the user what you'll create and get a yes before creating any ticket. Then offer `grill-architecture`, or stop.
+Then offer to draft it onto the feature ticket. If the team has a feature template, fill its sections rather than this list's shape: goal and scope in theirs, the parked architecture questions in its architecture section if it has one. The story split — each story's title, acceptance criteria and parked implementation questions — goes on the feature too, marked as a draft. Don't create story tickets yet: `grill-architecture` may still re-cut the split, and tickets created now would have to be edited, merged or deleted. It creates them once the split is settled. Show the user the edit and get a yes before changing the ticket.
+
+Then offer `grill-architecture`, or stop. If the user says there's nothing architectural to settle, offer to create the story tickets now instead — from the team's story template if it has one, each with its acceptance criteria and parked implementation questions, after a yes.
 
 </supporting-info>

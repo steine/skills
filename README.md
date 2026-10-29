@@ -28,8 +28,8 @@ The skills live in two different phases:
 grab PBI → /grill-feature → /grill-architecture
 ```
 
-- **`grill-feature`** ← *problem space.* Flesh out the stakeholder ask in the domain's language, land goal and scope, and split it into user stories — sliced by user value, never by layer — each with acceptance criteria. Architecture and implementation questions are parked for the grills that own them, not grilled here. Drafts go into the tracker's feature and story templates when the team has them.
-- **`grill-architecture`** ← *macro lenses.* Pressure-test the cross-cutting decisions — naming, layering, folder placement, port shape, config flow — and land ADRs so every issue inherits settled architecture. Re-cuts the story split where a decision requires it, and adds each story's cross-system dependencies.
+- **`grill-feature`** ← *problem space.* Flesh out the stakeholder ask in the domain's language, land goal and scope, and split it into user stories — sliced by user value, never by layer — each with acceptance criteria. Architecture and implementation questions are parked for the grills that own them, not grilled here. Everything is drafted onto the feature ticket, the story split included; no story tickets yet, since architecture may still re-cut it.
+- **`grill-architecture`** ← *macro lenses.* Pressure-test the cross-cutting decisions — naming, layering, folder placement, port shape, config flow — and land ADRs so every issue inherits settled architecture. Re-cuts the story split where a decision requires it, then creates the story tickets with their acceptance criteria and cross-system dependencies.
 
 ### Sprint / implementation → per slice, per dev
 
