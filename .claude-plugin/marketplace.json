@@ -10,7 +10,7 @@
       "name": "grill-skills",
       "source": "./plugins/grill-skills",
       "description": "Refinement-to-PR grills: grill-feature (goal, scope and user stories with acceptance criteria for the stakeholder ask, before architecture), then architectural and implementation pressure-testing split by altitude: grill-architecture (macro, ADR-worthy decisions, before code) and grill-implementation (per-slice mechanics, fix-now list, at code-time).",
-      "version": "1.7.1",
+      "version": "1.8.0",
       "author": {
         "name": "Anders Steinrud"
       }
