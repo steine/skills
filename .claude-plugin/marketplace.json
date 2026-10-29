@@ -10,7 +10,7 @@
       "name": "grill-skills",
       "source": "./plugins/grill-skills",
       "description": "Architectural and implementation pressure-testing skills, split by altitude: grill-architecture (macro, ADR-worthy decisions, before code) and grill-implementation (per-slice mechanics, fix-now list, at code-time).",
-      "version": "1.0.0",
+      "version": "1.7.1",
       "author": {
         "name": "Anders Steinrud"
       }
