@@ -66,7 +66,13 @@ The two grills pressure-test against the codebase via composable per-stack packs
 
 Skills are then invoked namespaced: `/grill-skills:grill-feature`, `/grill-skills:grill-architecture`, `/grill-skills:grill-implementation`, `/grill-skills:write-adr`, `/grill-skills:implement`, `/grill-skills:review`.
 
-`grill-feature` needs `grilling` and `domain-modeling`, `implement` needs `tdd` and `code-review`, and `review` needs `code-review`, all from [mattpocock/skills](https://github.com/mattpocock/skills).
+`grill-feature` needs `grilling` and `domain-modeling`, `implement` needs `tdd`, and `review` needs `code-review`, all from [mattpocock/skills](https://github.com/mattpocock/skills). Install them as his plugin:
+
+```
+/plugin install mattpocock-skills@claude-plugins-official
+```
+
+The skills call his by their plugin names (`mattpocock-skills:code-review` and so on). That matters for `code-review` in particular: Claude Code ships its own `code-review` under the bare name, a bug-hunting review without the Standards and Spec axes `review` is built on.
 
 ## Update
 

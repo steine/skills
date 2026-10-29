@@ -1,6 +1,6 @@
 ---
 name: review
-description: "Review a finished implementation — your own branch before opening the PR, or someone else's PR. Runs the `code-review` skill (standards + spec), checks its findings against the code and the PR discussion, then presents them per axis with a recommendation on each — fix now, allow, verify first, or your call — so it's clear what to fix before the change goes in. Use when finalizing a branch before the PR, reviewing a teammate's PR, or when the user asks what still has to change or whether it can merge. Prefer this over invoking `code-review` directly whenever the user wants to know what to do about the findings, not just what they are."
+description: "Review a finished implementation — your own branch before opening the PR, or someone else's PR. Runs Matt Pocock's two-axis `code-review` skill (standards + spec), checks its findings against the code and the PR discussion, then presents them per axis with a recommendation on each — fix now, allow, verify first, or your call — so it's clear what to fix before the change goes in. Use when finalizing a branch before the PR, reviewing a teammate's PR, or when the user asks what still has to change or whether it can merge. Prefer this over invoking `code-review` directly whenever the user wants to know what to do about the findings, not just what they are."
 ---
 
 <what-to-do>
@@ -26,7 +26,7 @@ Look for the repo's own review rules: anything in the agent instruction files (`
 
 If the user already supplies `code-review`'s output, start at step 3.
 
-Otherwise invoke the `code-review` skill with that fixed point and follow its process through both sub-agents and the two-axis report. For someone else's PR, `pr/<n>` stands in for `HEAD` in its diff and log commands. If `code-review` isn't available, stop and tell the user it comes from [mattpocock/skills](https://github.com/mattpocock/skills).
+Otherwise invoke Matt Pocock's `code-review` skill — `mattpocock-skills:code-review` when it's installed as his plugin — with that fixed point, and follow its process through both sub-agents and the two-axis report. For someone else's PR, `pr/<n>` stands in for `HEAD` in its diff and log commands. Claude Code ships its own `code-review` under the bare name: a bug-hunting review with no Standards or Spec axis, so everything below would have nothing to work on. It is not a substitute. If Matt's isn't available, stop and tell the user it comes from [mattpocock/skills](https://github.com/mattpocock/skills).
 
 Do **not** present `code-review`'s aggregate. Its two-axis report and closing summary are input to steps 3–5; step 5's layout replaces them.
 

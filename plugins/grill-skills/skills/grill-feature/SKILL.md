@@ -7,7 +7,7 @@ description: "Feature-level pressure-test of a stakeholder ask, the first step o
 
 Grill the user about the stakeholder's ask until the feature is clear enough to architect: what problem it solves and for whom, what is in and out of scope, which user stories it breaks into, and how anyone will know each story is done.
 
-Invoke the `grilling` skill for the session mechanics and the `domain-modeling` skill for the glossary, and follow both — where they conflict with the scope rules below, the scope rules win. If either isn't available, stop and tell the user they come from [mattpocock/skills](https://github.com/mattpocock/skills).
+Invoke the `grilling` skill for the session mechanics and the `domain-modeling` skill for the glossary, both from [mattpocock/skills](https://github.com/mattpocock/skills) — `mattpocock-skills:grilling` and `mattpocock-skills:domain-modeling` when installed as his plugin — and follow both. Where they conflict with the scope rules below, the scope rules win. Use Matt's: another source may ship a skill under the same name (`anthropic-skills:grilling`, say) with a different session format, and it is not a substitute. If his aren't available, stop and tell the user where they come from.
 
 This is the problem space. How the feature gets built has its own skills, later in refinement and in the sprint. Don't grill it here.
 
@@ -20,7 +20,7 @@ This is the problem space. How the feature gets built has its own skills, later 
 Before the first round:
 
 1. **The ask.** The backlog item, its parent epic, linked stakeholder notes. Note who asked, and in which words. Asks vary in quality — a one-liner is a starting point, not a gap to complain about.
-2. **The glossary.** `CONTEXT.md` (or `CONTEXT-MAP.md` and the context it points to). Note terms the ask uses that conflict with it or are missing from it.
+2. **The glossary.** `GLOSSARY.md` (or `GLOSSARY-MAP.md` and the context it points to); repos set up before domain-modeling renamed it use `CONTEXT.md` / `CONTEXT-MAP.md` — use whichever exists. Note terms the ask uses that conflict with it or are missing from it.
 3. **Current behaviour.** What the system does today in the area the ask touches, as observable behaviour — enough to tell what the ask changes. Read code for facts, not for design.
 4. **Similar past work.** Earlier features and stories in the same area of the tracker: how their goals and scope were cut, how big their stories were, what their acceptance criteria looked like. Draft from them where they fit.
 5. **The tracker's templates.** If the team has a feature or story template, read it now: its sections are where the output goes, and any notes on who writes what bind you.
@@ -30,7 +30,7 @@ Before the first round:
 - **Problem and outcome.** Who has the problem, what they do today, what changes for them once it ships. An ask phrased as a solution ("add a button that…") is traced back to the need behind it; the solution stays a candidate, not a given.
 - **Scope.** What's in, and what's explicitly out. Write down every exclusion a reader might otherwise assume is included — the explicit no's are what stop scope creep at the PR.
 - **Edge-case scenarios.** domain-modeling's scenario probing: each scenario that settles a boundary becomes an acceptance criterion or an out-of-scope line.
-- **Domain language.** Per domain-modeling: challenge fuzzy and conflicting terms, update `CONTEXT.md` inline. A term in the ask that is ambiguous, overloaded or in conflict with the glossary is a root of the tree — every criterion downstream is written in it — so grill it in the first round, alongside the problem question, not at the end.
+- **Domain language.** Per domain-modeling: challenge fuzzy and conflicting terms, update the glossary inline. A term in the ask that is ambiguous, overloaded or in conflict with the glossary is a root of the tree — every criterion downstream is written in it — so grill it in the first round, alongside the problem question, not at the end.
 
 ## Split into stories
 
@@ -77,7 +77,7 @@ Produce:
 1. **Goal** — the ask in one to three sentences of domain language: who, what changes, why.
 2. **Scope** — in; out (the explicit no's); constraints.
 3. **Stories** — each with a one-line title and its numbered acceptance criteria.
-4. **Glossary changes** — terms added to or changed in `CONTEXT.md`.
+4. **Glossary changes** — terms added to or changed in the glossary.
 5. **Open stakeholder questions** — each with your recommended answer.
 6. **Parked** — split into *for grill-architecture* and *for grill-implementation*.
 
