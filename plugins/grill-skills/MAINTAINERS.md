@@ -30,6 +30,8 @@ Firewall: codebase-wide consolidation is **neither** skill's job — it's punted
 
 `review` sits outside the two altitudes: it's the finish line, run on a finished change. It invokes Matt's `code-review` by skill name and owns only what sits on top: checking findings against the code and the PR discussion, recommending fix now or allow for each, and presenting them per axis. It never adds findings. Don't copy `code-review`'s process into it; then upstream improvements still reach it.
 
+`implement` is the exception to that rule: a copy of Matt's `implement`, because his hardcodes `code-review` as its last step and is too short to wrap. Keep it close to upstream and change only the review step: commit first (the review sees only commits), call `review` against the `HEAD` noted before starting, apply its *Fix now* items, and stop on *Verify first* and *Your call*. When upstream `implement` changes, port the change by hand.
+
 ADRs are written only through `write-adr`. `grill-architecture` hands settled decisions to it by skill name — never by linking its files, which would break the self-containment invariant below. The gate, format and supersession rules live in `write-adr` alone.
 
 The front-end layering the spine re-anchors onto: `presentation ← view-logic ← state (server/client) ← domain ← transport ← shared` (dependencies point down).

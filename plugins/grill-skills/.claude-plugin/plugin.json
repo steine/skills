@@ -1,7 +1,7 @@
 {
   "name": "grill-skills",
   "version": "1.7.1",
-  "description": "A feature grill that lands scope and splits the ask into user stories with acceptance criteria, architectural and implementation pressure-testing skills split by altitude, plus an ADR writer and a review wrapper for finished implementations.",
+  "description": "A feature grill that lands scope and splits the ask into user stories with acceptance criteria, architectural and implementation pressure-testing skills split by altitude, plus an ADR writer, an implement skill that ends in review, and a review wrapper for finished implementations.",
   "author": {
     "name": "Anders Steinrud",
     "email": "asteinrud@gmail.com"

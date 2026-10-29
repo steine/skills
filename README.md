@@ -34,16 +34,17 @@ grab PBI → /grill-feature → /grill-architecture
 ### Sprint / implementation → per slice, per dev
 
 ```
-grab issue → /grill-implementation → /implement → /review → PR
+grab issue → /grill-implementation → /implement → PR
 ```
 
 - **`grill-implementation`** ← *micro lenses.* At issue pickup, once the architecture is settled, vet the slice's concrete mechanics — reuse of existing affordances, read-path minimalism, spec-gaps, vacuous success, impact sweep, cross-boundary contract drift.
+- **`implement`** ← *build.* Matt's `implement` with its last step swapped: commits, then runs `review` instead of `code-review` and applies the fix-now items, stopping to ask on anything that needs a decision.
 - **`review`** ← *finish line.* Before opening the PR (or when reviewing someone else's), wraps Matt's `code-review` (standards + spec) and presents its findings per axis with a recommendation on each — fix now, allow, verify first, or your call — so an in-scope gap isn't shipped as "non-blocking".
 
 
 ## What's in it
 
-One plugin, **grill-skills**, bundling a feature grill that lands the ask, two grill skills that are a deliberate split of one concern, the ADR writer they hand off to, and a review wrapper for the finished implementation:
+One plugin, **grill-skills**, bundling a feature grill that lands the ask, two grill skills that are a deliberate split of one concern, the ADR writer they hand off to, an `implement` that ends in `review`, and a review wrapper for the finished implementation:
 
 | Skill | Altitude | When | Output |
 |-------|----------|------|--------|
@@ -51,6 +52,7 @@ One plugin, **grill-skills**, bundling a feature grill that lands the ask, two g
 | `grill-architecture` | Macro — hard-to-reverse decisions | Refinement, after `grill-feature` | Revised plan + **ADRs** |
 | `grill-implementation` | Micro — reversible per-slice mechanics | Sprint, at issue pickup | **Fix-now list** (no ADRs) |
 | `write-adr` | Recording — one decision per ADR | Whenever an ADR is written, superseded or retired | Short ADR + status changes on the records it replaces |
+| `implement` | Build — the slice, then its review | Sprint, after `grill-implementation` | Committed slice with its fix-now items applied |
 | `review` | Finish line — what the change must still fix | Before opening the PR, or reviewing someone else's | Per-axis findings, each with a **fix now / allow** recommendation |
 
 The two grills pressure-test against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs). For the internal structure and how to extend it, see [plugins/grill-skills/MAINTAINERS.md](plugins/grill-skills/MAINTAINERS.md).
@@ -62,9 +64,9 @@ The two grills pressure-test against the codebase via composable per-stack packs
 /plugin install grill-skills@steine-skills
 ```
 
-Skills are then invoked namespaced: `/grill-skills:grill-feature`, `/grill-skills:grill-architecture`, `/grill-skills:grill-implementation`, `/grill-skills:write-adr`, `/grill-skills:review`.
+Skills are then invoked namespaced: `/grill-skills:grill-feature`, `/grill-skills:grill-architecture`, `/grill-skills:grill-implementation`, `/grill-skills:write-adr`, `/grill-skills:implement`, `/grill-skills:review`.
 
-`grill-feature` needs `grilling` and `domain-modeling`, and `review` needs `code-review`, all from [mattpocock/skills](https://github.com/mattpocock/skills).
+`grill-feature` needs `grilling` and `domain-modeling`, `implement` needs `tdd` and `code-review`, and `review` needs `code-review`, all from [mattpocock/skills](https://github.com/mattpocock/skills).
 
 ## Update
 
