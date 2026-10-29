@@ -26,6 +26,8 @@ Recursion: `spine → language pack → framework overlay`. The spine says *what
 
 Firewall: codebase-wide consolidation is **neither** skill's job — it's punted up to `improve-codebase-architecture`. `grill-implementation` stays inside one slice; if a decision there feels ADR-worthy, it belonged to `grill-architecture`.
 
+`grill-feature` sits before the two altitudes, in the problem space: it lands goal and scope for the stakeholder's ask and splits it into user stories with acceptance criteria. The split is by user value, never by layer, and `grill-architecture` owns any re-cut its decisions force. It composes Matt's `grilling` and `domain-modeling` by skill name and owns only the scope rules on top — architecture and implementation questions are parked for the two grills, never grilled, and it writes no ADRs. Both grills read the parked list from the issue as candidate questions. It has no packs: the problem space doesn't vary by stack.
+
 `review` sits outside the two altitudes: it's the finish line, run on a finished change. It invokes Matt's `code-review` by skill name and owns only what sits on top: checking findings against the code and the PR discussion, recommending fix now or allow for each, and presenting them per axis. It never adds findings. Don't copy `code-review`'s process into it; then upstream improvements still reach it.
 
 ADRs are written only through `write-adr`. `grill-architecture` hands settled decisions to it by skill name — never by linking its files, which would break the self-containment invariant below. The gate, format and supersession rules live in `write-adr` alone.

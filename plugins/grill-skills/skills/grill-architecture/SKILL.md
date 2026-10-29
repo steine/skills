@@ -1,6 +1,6 @@
 ---
 name: grill-architecture
-description: "Architectural pressure-test of a plan or issue before implementation. Targets layered/hexagonal back-ends and layered front-ends via composable per-stack smell packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs). Challenges every prescribed type, folder, config-flow, layer assignment, and cross-cutting placement against codebase precedent, framework idiom, and layering principles. Use at two granularities — (1) after to-prd, before to-issues, for cross-cutting architectural ADRs that the issue decomposition inherits; (2) at issue-start, before code, for slice-specific decisions inheriting prior ADRs. Output: revised plan + ADRs for hard-to-reverse picks. For reversible per-slice implementation mechanics once the architecture is settled — reuse of existing affordances, read-path minimalism, interface spec-gaps, type/schema-change impact sweep, cross-boundary contract drift, cross-workspace compat — use grill-implementation instead."
+description: "Architectural pressure-test of a plan or issue before implementation. Targets layered/hexagonal back-ends and layered front-ends via composable per-stack smell packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs). Challenges every prescribed type, folder, config-flow, layer assignment, and cross-cutting placement against codebase precedent, framework idiom, and layering principles. Use in refinement, after grill-feature, to settle the cross-cutting architectural decisions every issue inherits. Output: revised plan + ADRs for hard-to-reverse picks. For reversible per-slice implementation mechanics once the architecture is settled — reuse of existing affordances, read-path minimalism, interface spec-gaps, type/schema-change impact sweep, cross-boundary contract drift, cross-workspace compat — use grill-implementation instead."
 ---
 
 <what-to-do>
@@ -37,6 +37,7 @@ Walk these before grilling:
 4. **Existing ADRs.** Read `docs/adr/`. Don't re-litigate a settled decision — but treat only the named decision and its stated alternatives as binding. Implementation detail an ADR happened to carry along (exact schema, routes, code snippets) is context, not law to defend.
 5. **Responsibility count per type.** For each spec-named type, list its responsibilities (transport / policy / mapping / persistence / etc.). >1 distinct responsibility → tag as first Q to grill.
 6. **Issue-tree scope.** If the spec has a parent issue / epic / project, read it for inherited scope (deferred items, explicit out-of-scope, parent-level ADRs). Cite when auto-resolving via parent scope: "answered upstream by `<parent ref>`."
+7. **Parked questions and story split.** If the feature carries questions `grill-feature` parked for architecture (often in an architecture section), each is a candidate Q — put it on the slate, or say why it doesn't bind. Read its stories too: the decisions here are tested against them, and may re-cut them.
 
 Recon is agent-internal. Surface it in the preamble as **one-liner bullets** — topic + load-bearing fact per bullet (sources read, precedents verified, ADR state, entity/lookup facts that drive auto-resolves). Drop prose connectives, non-load-bearing paths, redundant qualifiers; keep only facts an auto-resolve or a Q recommendation will cite. Reserve detailed precedents (file paths, code excerpts) for the Q that consumes them.
 
@@ -151,7 +152,8 @@ When the grill is done, produce a summary:
 2. **Settled decisions indexed back to question numbers**
 3. **Divergences from the source issue** — for tracker update
 4. **ADRs landed** — list with one-line summary each
-5. **Offer next step** — rewrite issue body, generate task list, or stop
+5. **Story split changes** — if the feature was split into stories, the re-cuts the decisions force (an enabling story added, stories that must ship together merged or linked), and each story's cross-system dependencies. Edit the split directly; don't send it back to `grill-feature`.
+6. **Offer next step** — draft the settled decisions and ADR links into the feature (its architecture section, if the template has one) and the dependencies into each story, rewrite the issue body, or stop. Show what changes and get a yes before editing tickets.
 
 ## Offer ADRs sparingly
 

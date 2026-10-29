@@ -1,0 +1,58 @@
+{
+  "skill_name": "grill-feature",
+  "note": "Drift traps. Each prompt tempts the grill out of the problem space or into writing an ADR. Failure mode = grilling architecture or implementation, answering it, or recording an ADR. A good run parks what belongs downstream, keeps stakeholder constraints as scope, and carries on with the ask.",
+  "evals": [
+    {
+      "id": 4,
+      "name": "user-volunteers-architecture",
+      "prompt": "Refining ACME-352 ('Show the carrier's tracking status on the order page'). I'm already thinking a CarrierTrackingGateway in Infrastructure with a typed HttpClient, and the status enum probably goes in Shared — does that sound right? Anyway, grill the feature.",
+      "files": [],
+      "trap": "The gateway placement, HttpClient and enum home are architecture. A good run parks them for grill-architecture in one line each without weighing in, then grills the ask: which statuses the user needs to see, how fresh they must be, what shows when the carrier has no data. Answering or grilling the layering = drift.",
+      "assertions": [
+        "Parks the gateway / HttpClient / enum placement for grill-architecture",
+        "Does not weigh in on the proposed gateway, HttpClient or enum placement, and does not decide which layer or project the status type goes in",
+        "Grills the ask itself: which tracking statuses users need, how fresh they must be, what shows when the carrier has no data",
+        "Does not draft or offer an ADR"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "user-asks-an-implementation-question",
+      "prompt": "Grill ACME-360 ('Sales reps can filter the order list by delivery region'). Quick one first: should we reuse the existing OrderListQuery projection or write a new query for this?",
+      "files": [],
+      "trap": "Reuse vs new query is implementation. A good run parks it for grill-implementation and grills what a delivery region is (glossary), which orders belong to one, and the acceptance criteria. Weighing reuse = drift.",
+      "assertions": [
+        "Parks the reuse-vs-new-query question for grill-implementation",
+        "Does not answer or weigh the reuse-vs-new-query question",
+        "The first message (section A) grills what a delivery region is, not only the closing glossary"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "stakeholder-constraint-is-scope-not-architecture",
+      "prompt": "Grill ACME-371 ('Customers can download past invoices as PDF'). Legal has said invoices must be produced by the existing Billing system — we're not allowed to render them anywhere else.",
+      "files": [],
+      "trap": "The Billing requirement looks like a technical choice but is a stakeholder-mandated constraint. A good run records it under scope as a constraint and carries on. Parking it as an architecture question, or challenging it, misreads it.",
+      "assertions": [
+        "Records the Billing requirement as a scope constraint",
+        "Does not treat the Billing requirement as an architecture decision (parked, written up as an ADR, or designed around)",
+        "Does not draft or offer an ADR for the Legal constraint",
+        "The opening question is about the customer's need or the ask, not about how invoices are rendered, stored or retrieved",
+        "Continues grilling the ask (which invoices, how far back, who can download)"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "adr-bait-for-a-scope-decision",
+      "prompt": "We just settled in the ACME-380 grill that partial refunds are out of scope for this release. Write an ADR for that so nobody re-opens it.",
+      "files": [],
+      "trap": "A scope decision is not an ADR. A good run declines, puts it in the ticket's explicit out-of-scope list, and says why (what was asked belongs in the ticket). Drafting or offering an ADR = failure.",
+      "assertions": [
+        "Declines to write or offer an ADR for the scope decision",
+        "Places 'partial refunds' in the ticket's explicit out-of-scope list",
+        "Explains why a scope decision belongs in the ticket rather than an ADR",
+        "Does not decide the refund data model or validation mechanism anywhere in the output (parking it is fine)"
+      ]
+    }
+  ]
+}

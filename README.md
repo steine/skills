@@ -18,22 +18,23 @@ Coverage applies to both skills (architecture + implementation). Stubs are seede
 
 ## Origin & when to use
 
-These extend [Matt Pocock's engineering skill suite](https://github.com/mattpocock/skills) (`grill-with-docs`, `to-prd`, `to-issues`) in the architectural dimension.
+These extend [Matt Pocock's engineering skill suite](https://github.com/mattpocock/skills) (`grilling`, `domain-modeling`, `implement`, `code-review`) in the architectural dimension.
 
-The two skills live in two different phases:
+The skills live in two different phases:
 
 ### Refinement → Definition of Ready
 
 ```
-grab PBI → /grill-with-docs → /grill-architecture* → /to-prd → /to-issues
+grab PBI → /grill-feature → /grill-architecture
 ```
 
-- **`grill-architecture`** ← *macro lenses.* Pressure-test the cross-cutting decisions — naming, layering, folder placement, port shape, config flow — and land ADRs so every issue inherits settled architecture.
+- **`grill-feature`** ← *problem space.* Flesh out the stakeholder ask in the domain's language, land goal and scope, and split it into user stories — sliced by user value, never by layer — each with acceptance criteria. Architecture and implementation questions are parked for the grills that own them, not grilled here. Drafts go into the tracker's feature and story templates when the team has them.
+- **`grill-architecture`** ← *macro lenses.* Pressure-test the cross-cutting decisions — naming, layering, folder placement, port shape, config flow — and land ADRs so every issue inherits settled architecture. Re-cuts the story split where a decision requires it, and adds each story's cross-system dependencies.
 
 ### Sprint / implementation → per slice, per dev
 
 ```
-grab issue → /grill-implementation → implement → [/grill-implementation on the diff] → /review → PR
+grab issue → /grill-implementation → /implement → /review → PR
 ```
 
 - **`grill-implementation`** ← *micro lenses.* At issue pickup, once the architecture is settled, vet the slice's concrete mechanics — reuse of existing affordances, read-path minimalism, spec-gaps, vacuous success, impact sweep, cross-boundary contract drift.
@@ -42,12 +43,13 @@ grab issue → /grill-implementation → implement → [/grill-implementation on
 
 ## What's in it
 
-One plugin, **grill-skills**, bundling two grill skills that are a deliberate split of one concern, the ADR writer they hand off to, and a review wrapper for the finished implementation:
+One plugin, **grill-skills**, bundling a feature grill that lands the ask, two grill skills that are a deliberate split of one concern, the ADR writer they hand off to, and a review wrapper for the finished implementation:
 
 | Skill | Altitude | When | Output |
 |-------|----------|------|--------|
-| `grill-architecture` | Macro — hard-to-reverse decisions | Refinement, before `to-prd` | Revised plan + **ADRs** |
-| `grill-implementation` | Micro — reversible per-slice mechanics | Sprint, at issue pickup (opt. pre-PR) | **Fix-now list** (no ADRs) |
+| `grill-feature` | Problem space — what's asked and when it's done | Refinement, first step | Goal, scope, **user stories with acceptance criteria**, parked questions (no ADRs) |
+| `grill-architecture` | Macro — hard-to-reverse decisions | Refinement, after `grill-feature` | Revised plan + **ADRs** |
+| `grill-implementation` | Micro — reversible per-slice mechanics | Sprint, at issue pickup | **Fix-now list** (no ADRs) |
 | `write-adr` | Recording — one decision per ADR | Whenever an ADR is written, superseded or retired | Short ADR + status changes on the records it replaces |
 | `review` | Finish line — what the change must still fix | Before opening the PR, or reviewing someone else's | Per-axis findings, each with a **fix now / allow** recommendation |
 
@@ -60,9 +62,9 @@ The two grills pressure-test against the codebase via composable per-stack packs
 /plugin install grill-skills@steine-skills
 ```
 
-Skills are then invoked namespaced: `/grill-skills:grill-architecture`, `/grill-skills:grill-implementation`, `/grill-skills:write-adr`, `/grill-skills:review`.
+Skills are then invoked namespaced: `/grill-skills:grill-feature`, `/grill-skills:grill-architecture`, `/grill-skills:grill-implementation`, `/grill-skills:write-adr`, `/grill-skills:review`.
 
-`review` needs `code-review` from [mattpocock/skills](https://github.com/mattpocock/skills) installed.
+`grill-feature` needs `grilling` and `domain-modeling`, and `review` needs `code-review`, all from [mattpocock/skills](https://github.com/mattpocock/skills).
 
 ## Update
 

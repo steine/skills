@@ -1,0 +1,95 @@
+{
+  "skill_name": "grill-feature",
+  "evals": [
+    {
+      "id": 0,
+      "name": "solution-shaped-ask-traced-to-the-need",
+      "prompt": "New backlog item ACME-301 from the sales managers: 'Add an Export to Excel button on the order list.' That's the whole ticket. Grill it so we can refine it.",
+      "files": [],
+      "assertions": [
+        "Traces the 'Export to Excel' button back to the underlying need (what the sales managers do with the export) instead of accepting the button as the goal",
+        "Asks for or proposes explicit out-of-scope items",
+        "Does not grill or decide architecture or implementation (file-format library, endpoint, streaming, sync vs async download, query shape)",
+        "Has an explicit goal statement naming the user outcome rather than the Excel button (a story title may name Excel once the grilling has established it as the user's need)"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "acceptance-criteria-that-cant-fail",
+      "prompt": "Ticket ACME-318: 'Customers get a reminder before their subscription renews.' Acceptance criteria: (1) Reminders work correctly. (2) The reminder is user-friendly. (3) Errors are handled gracefully. Grill the feature before we take it to architecture.",
+      "files": [],
+      "assertions": [
+        "Flags all three acceptance criteria as uncheckable (they cannot fail)",
+        "Proposes replacement criteria that are observable pass/fail (e.g. when the reminder arrives, through which channel, what it says)",
+        "Probes edge-case scenarios around the reminder (e.g. cancelled before renewal, renewal date changes, no contact details)",
+        "Does not grill or decide implementation (scheduler, background job, email provider, retry policy)",
+        "Every drafted acceptance criterion is observable by the customer or an operator, none checks internal state (job status, stored flags)"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ask-term-conflicts-with-glossary",
+      "prompt": "Our CONTEXT.md defines **Customer** as the company that signs the contract and **User** as a person who logs in on a Customer's behalf; it says to avoid 'account'. Stakeholder ask ACME-325: 'When an account is suspended, all its users should be logged out and the account owner gets an email.' Grill the feature.",
+      "files": [],
+      "assertions": [
+        "Calls out 'account' as conflicting with the glossary (Customer vs User) and asks which is meant",
+        "Challenges 'account owner' as a term missing from the glossary and proposes a canonical term",
+        "Proposes or records a glossary update rather than silently adopting the stakeholder's wording",
+        "The first message (section A) grills the terminology, not only the problem",
+        "Does not add scope the stakeholder didn't ask for (e.g. revoking API tokens, a reinstatement email) without raising it as a stakeholder question or listing it as out of scope"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "product-decision-the-user-cant-make",
+      "prompt": "Grilling ACME-340 ('Let warehouse staff split a shipment into several parcels'). I don't know whether a split shipment should be invoiced once or per parcel — that's for the finance lead, who's out this week. Let's keep going on the rest.",
+      "files": [],
+      "assertions": [
+        "Records the invoicing question as an open stakeholder question with a recommended answer",
+        "Does not settle the invoicing question on the user's behalf",
+        "Keeps grilling other parts of the feature in the same turn",
+        "Writes acceptance criteria, and every one that depends on the invoicing question is marked provisional and names the open question",
+        "Does not draft or offer an ADR"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "stories-sliced-by-layer",
+      "prompt": "Scope for ACME-390 ('Customers can pause their subscription for up to three months') is settled. My draft split: (1) Pause API endpoint, (2) Pause button in the customer portal, (3) Database column for the paused state, (4) Billing skips paused subscriptions. Grill the split.",
+      "files": [],
+      "assertions": [
+        "Flags the draft stories as sliced by layer or technology (API, button, database column)",
+        "Proposes a re-cut into stories that each deliver user-observable value end to end",
+        "Every drafted acceptance criterion is observable by the customer or an operator, none checks internal state (stored fields, flags, computed dates)",
+        "Does not grill or decide architecture (endpoint design, schema, data model) while re-cutting",
+        "Does not draft or offer an ADR"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "one-story-holds-the-whole-feature",
+      "prompt": "ACME-395 ('Warehouse staff can return damaged items to the supplier') — I've written it as a single story with these acceptance criteria: staff can register a return; the supplier gets a return notice; the item leaves stock; a credit note is booked when the supplier confirms; staff can see all open returns. Grill it.",
+      "files": [],
+      "assertions": [
+        "Identifies that the single story holds several separately acceptable outcomes",
+        "Splits it into stories by outcome a user can accept, not by department, team or system area",
+        "Gives each proposed story its own acceptance criteria",
+        "States the order or dependencies between the proposed stories",
+        "Keeps open stakeholder questions separate from parked technical questions"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "criterion-restates-the-story",
+      "prompt": "Story under ACME-360: 'Sales reps can filter the order list by delivery region.' Acceptance criteria: (1) Sales reps can filter the order list by delivery region. (2) The filter is fast. Grill the story.",
+      "files": [],
+      "assertions": [
+        "Flags criterion (1) as restating the story instead of saying how to check it",
+        "Flags 'the filter is fast' as uncheckable and asks for or proposes a measurable threshold",
+        "Proposes criteria covering all three of: only orders for the chosen region are shown; orders with no region; clearing the filter",
+        "Has an explicit out-of-scope list",
+        "Does not prescribe performance mechanics (index, cache, query shape) to make the filter fast"
+      ]
+    }
+  ]
+}
