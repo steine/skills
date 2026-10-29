@@ -37,7 +37,7 @@ grab PBI → /grill-feature → /grill-architecture
 grab issue → /grill-implementation → /implement → PR
 ```
 
-- **`grill-implementation`** ← *micro lenses.* At issue pickup, once the architecture is settled, vet the slice's concrete mechanics — reuse of existing affordances, read-path minimalism, spec-gaps, vacuous success, impact sweep, cross-boundary contract drift.
+- **`grill-implementation`** ← *micro lenses.* At issue pickup, once the architecture is settled, vet the slice's concrete mechanics — reuse of existing affordances, read-path minimalism, spec-gaps, vacuous success, impact sweep, cross-boundary contract drift. If the story has acceptance criteria but no approach, drafts one first and grills that; then maps each criterion to test cases, the list `implement` builds against.
 - **`implement`** ← *build.* Matt's `implement` with its last step swapped: commits, then runs `review` instead of `code-review` and applies the fix-now items, stopping to ask on anything that needs a decision.
 - **`review`** ← *finish line.* Before opening the PR (or when reviewing someone else's), wraps Matt's `code-review` (standards + spec) and presents its findings per axis with a recommendation on each — fix now, allow, verify first, or your call — so an in-scope gap isn't shipped as "non-blocking".
 
@@ -50,7 +50,7 @@ One plugin, **grill-skills**, bundling a feature grill that lands the ask, two g
 |-------|----------|------|--------|
 | `grill-feature` | Problem space — what's asked and when it's done | Refinement, first step | Goal, scope, **user stories with acceptance criteria**, parked questions (no ADRs) |
 | `grill-architecture` | Macro — hard-to-reverse decisions | Refinement, after `grill-feature` | Revised plan + **ADRs** |
-| `grill-implementation` | Micro — reversible per-slice mechanics | Sprint, at issue pickup | **Fix-now list** (no ADRs) |
+| `grill-implementation` | Micro — reversible per-slice mechanics | Sprint, at issue pickup | Slice approach, **fix-now list**, tests traced to the acceptance criteria (no ADRs) |
 | `write-adr` | Recording — one decision per ADR | Whenever an ADR is written, superseded or retired | Short ADR + status changes on the records it replaces |
 | `implement` | Build — the slice, then its review | Sprint, after `grill-implementation` | Committed slice with its fix-now items applied |
 | `review` | Finish line — what the change must still fix | Before opening the PR, or reviewing someone else's | Per-axis findings, each with a **fix now / allow** recommendation |

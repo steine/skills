@@ -30,6 +30,20 @@
       "name": "replacement-crawl-must-assert-its-floor",
       "prompt": "Picking up ACME-930: 'Automated crawl of every page in the back-office menu — replaces the manual back-office click-through checklist (18 pages)'. My plan: global setup signs in as the test user and saves the menu endpoint's response; the spec file generates one Playwright test per menu leaf; each test asserts HTTP 200, no console errors, no failed API calls, and that `main` contains some visible text. If the menu comes back empty, setup throws. The back-office section only appears in the menu when the user has the admin role. Grill the slice before I write it.",
       "files": []
+    },
+    {
+      "id": 6,
+      "name": "story-with-criteria-but-no-approach",
+      "prompt": "Picking up ACME-412: 'Warehouse staff can put an order on hold, with a reason, so it isn't picked.' Acceptance criteria: (1) Given an order that hasn't been picked, when staff put it on hold with a reason, it disappears from the pick list and the order page shows 'On hold' with the reason. (2) Putting an order that's already picked on hold is refused, with a message saying why. (3) Releasing a held order puts it back on the pick list. Architecture is settled: ADR-0014 says order states live on the Order aggregate in Acme.Warehouse.Domain, and commands are MediatR handlers under Acme.Warehouse.Application/Features/Orders. Nobody has written an approach yet. Grill the implementation.",
+      "files": [],
+      "assertions": [
+        "Drafts an approach before the grill slate and marks it as a draft",
+        "The approach says how each of the three acceptance criteria is met",
+        "Runs the lenses on its own draft: raises at least one real question or fix about it (e.g. hold racing a pick in progress, the refusal's error contract, cancellation)",
+        "Drafts automatic test cases per criterion covering positive, negative and edge cases, each labelled with the criterion it traces to",
+        "The pick-list test asserts that the specific held order is absent, not merely that the list changed or is non-empty",
+        "Does not re-open the settled architecture (where order state lives, the handler style)"
+      ]
     }
   ]
 }

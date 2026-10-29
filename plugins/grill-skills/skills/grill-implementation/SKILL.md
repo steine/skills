@@ -1,6 +1,6 @@
 ---
 name: grill-implementation
-description: "Implementation-level pressure-test of a single slice's draft before writing code. Validates a slice's concrete mechanics against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs) — reuse of existing affordances, read-path minimalism, interface spec-gaps (cancellation, result/error contract, observability, idempotency), vacuous success (a test, check or job that can pass without checking what it claims), the cross-cutting impact of any type/schema change, cross-boundary contract drift where a front-end re-declares a server DTO by hand, and cross-workspace dependency-graph compatibility. Use at issue-start once the architecture is settled (ADRs/grill-architecture done) and you're about to implement. For a finished diff before PR, use review instead. Inherits prior architectural decisions; does not re-litigate naming, folder, layer, or port-shape. Output: a corrected slice plan and a fix-now list. No ADRs."
+description: "Implementation-level pressure-test of a single slice before writing code. If the story has acceptance criteria but no approach, drafts one first. Validates the slice's mechanics against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs) — reuse of existing affordances, read-path minimalism, interface spec-gaps (cancellation, error contract, observability, idempotency), vacuous success (a test or check that can pass without checking what it claims), the impact of any type/schema change, cross-boundary contract drift, and cross-workspace dependency-graph compatibility — then maps each acceptance criterion to test cases. Use at issue-start once the architecture is settled (ADRs/grill-architecture done) and you're about to implement. For a finished diff before PR, use review instead. Does not re-litigate naming, folder, layer or port-shape. Output: the slice approach, a fix-now list, and a test list traced to the acceptance criteria. No ADRs."
 ---
 
 <what-to-do>
@@ -9,7 +9,7 @@ Pressure-test the concrete mechanics of one slice — the code you're about to w
 
 Ask questions one at a time. If a question is answerable by grepping or reading the codebase, do that instead of asking — these are factual checks, not preferences.
 
-This skill is **validation**, not discovery. It takes the slice's prescription as input and vets it. It does not wander the codebase hunting for unrelated improvements (that's `improve-codebase-architecture`), and it does not re-open layering / naming / folder / port-shape (that's `grill-architecture`, and those are inherited as settled). Stay inside the slice.
+This skill is **validation**, not discovery. It takes the slice's prescription as input and vets it. When the story arrives with acceptance criteria but no approach, there is nothing to vet yet: draft one from the criteria and recon first (see *Draft the approach*), then vet that. It does not wander the codebase hunting for unrelated improvements (that's `improve-codebase-architecture`), and it does not re-open layering / naming / folder / port-shape (that's `grill-architecture`, and those are inherited as settled). Stay inside the slice.
 
 </what-to-do>
 
@@ -46,6 +46,17 @@ Walk these first — they're cheap and they collapse most questions into auto-re
 
 Surface recon as a short bullet list in the preamble — one line per load-bearing finding (affordance found, sibling read shape, ADR state, workspace edge). Pack topic + fact per bullet; drop prose connectives and non-load-bearing paths. Detailed excerpts belong inside the question that consumes them.
 
+## Draft the approach
+
+If the story already states how it will be built, skip this — vet what's there. If it has acceptance criteria but no approach, draft one after recon, before the slate. Write it the way the team would: short, and only what the lenses need to bite on —
+
+- the modules and entry points the slice touches, and the sibling it follows
+- each read and write, and what it moves
+- new or changed types, contracts and schema
+- how each acceptance criterion is met — one line per criterion, so a criterion nothing satisfies shows up now
+
+Build it from the inherited decisions and the recon, preferring the sibling's shape and the affordances you found; where recon leaves a real choice, pick one and let the grill challenge it. Then run the lenses on the draft exactly as if the user had written it — a draft you wrote is not exempt. Mark it as a draft: the approach is the team's to edit or approve.
+
 ## Preamble format
 
 ```
@@ -54,6 +65,12 @@ Recon:
 - <affordances found on touched modules>
 - <sibling read/write shape>
 - <workspace edges / cross-boundary contracts, if any>
+
+Approach (draft — omit if the story has one):
+- <touched modules / sibling followed>
+- <reads and writes>
+- <new or changed types, contracts, schema>
+- AC1 → <how it is met>
 
 Auto-resolved:
 - A1  <decision>                       (Reason: <one-line reason>)
@@ -121,6 +138,17 @@ When the slice adds an import from a shared workspace lib that this consumer did
 
 Load **REFERENCE:** [workspace-compat.md](./references/workspace-compat.md) for the watch-for list and the collision options when this lens fires.
 
+## Map acceptance criteria to tests
+
+Once the slate is settled, draft the slice's tests from its acceptance criteria — the list `implement` drives its TDD from.
+
+- **Automatic** — for each criterion, the positive case, the negative case, and the edge cases the refinement scenarios surfaced. Name the seam each runs at (unit, integration, end-to-end), matching where the sibling's tests sit.
+- **Manual** — only what can't be automated, as concrete steps with the expected result.
+
+Every case traces to a criterion or a refinement scenario; label it with the criterion's number. A case that traces to nothing is padding — drop it, or, if it guards real behaviour, the story is missing a criterion: raise that as a question for the story's owner rather than writing the criterion yourself. A criterion with no automatic case and no manual step is a gap — say so. When you're vetting a test list someone else wrote, name each criterion it misses before you add cases for it ("your list has no case for criterion 2"); otherwise the added cases hide that the list had a hole, and the author doesn't learn to look for it. Coverage should reflect real domain scenarios, not every pattern a test generator can enumerate.
+
+Run *Vacuous success* on each drafted case: name the broken state it must reject, and tighten the assertion if it wouldn't.
+
 ## Verify facts in-grill
 
 These lenses turn on facts — does the affordance exist, is the column persisted, does the sibling over-fetch, what version is hoisted. Verify with Bash / Read / grep inside the grill before recommending. Memory is not confirmation; don't ship a recommendation with "I think" or punt to "check later." A grill produces decisions.
@@ -131,10 +159,12 @@ When an answer follows from a lens already applied earlier in the session, cite 
 
 When the grill is done, produce:
 
-1. **Fix-now list** — concrete changes to the slice, each tied to the question that surfaced it and the lens it came from. This is the deliverable; keep it actionable.
-2. **Blockers split out** — anything that can't be fixed inside this slice (a workspace version unify, a leaner endpoint upstream, a missing precondition). Flag for the tracker as a separate item.
-3. **Punted-up items** — codebase-wide consolidation noticed but deliberately left for `improve-codebase-architecture`, so it's recorded rather than lost.
-4. **Offer next step** — apply the fixes, update the issue body, or stop.
+1. **Approach** — the slice approach with the settled answers folded in (the draft, if you wrote one, now corrected).
+2. **Fix-now list** — concrete changes to the slice, each tied to the question that surfaced it and the lens it came from. This is the deliverable; keep it actionable.
+3. **Tests** — automatic cases per criterion (positive, negative, edge, with their seam) and manual steps, each labelled with its criterion; then any criterion without a case, and any missing criterion raised for the story's owner.
+4. **Blockers split out** — anything that can't be fixed inside this slice (a workspace version unify, a leaner endpoint upstream, a missing precondition). Flag for the tracker as a separate item.
+5. **Punted-up items** — codebase-wide consolidation noticed but deliberately left for `improve-codebase-architecture`, so it's recorded rather than lost.
+6. **Offer next step** — draft the approach, fix-now list and tests into the story (its template's sections, if it has them), apply the fixes, or stop. Show the edit and get a yes before changing the ticket.
 
 No ADRs. If a decision here feels ADR-worthy, it was probably an architecture question in disguise — route it back to `grill-architecture`.
 

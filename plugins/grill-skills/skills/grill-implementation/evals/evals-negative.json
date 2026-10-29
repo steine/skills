@@ -29,6 +29,19 @@
       "prompt": "About to add GET /api/orders/{customerId}/open to Acme.Sales: returns the customer's open orders as a list of `OpenOrderVm`, an empty list when there are none. The handler is a projected EF query with `AsNoTracking()` and takes the request's CancellationToken. Grill it.",
       "files": [],
       "trap": "Vacuous success must not fire: the endpoint produces data, not a verdict, and an empty list is the correct answer when a customer has no open orders. Mark the lens N/A instead of demanding a non-empty floor."
+    },
+    {
+      "id": 7,
+      "name": "approach-exists-tests-pad-and-miss",
+      "prompt": "ACME-360, story 'Sales reps can filter the order list by delivery region'. Acceptance criteria: (1) Only orders for the chosen region are shown. (2) Orders with no region appear only under 'No region'. (3) Clearing the filter shows all orders again. Approach on the story: add an optional RegionId to GetOrderList.Query in Acme.Sales.Application/Features/Orders and filter in the existing projection; the region dropdown reads the existing GetRegions query. My test list: filter returns orders for the region; filter by region writes an audit log entry; clearing the filter returns all orders; the dropdown renders. Grill the implementation and the tests.",
+      "files": [],
+      "trap": "The approach is already there, so a good run vets it rather than drafting a new one. In the tests, the audit-log case traces to no criterion (padding, or a missing criterion to raise with the story's owner, not to write), 'the dropdown renders' is pattern-complete rather than a domain scenario, and criterion (2) has no test. Redrafting the approach, accepting the list as is, or inventing a criterion = failure.",
+      "assertions": [
+        "Vets the approach on the story instead of drafting a new one",
+        "Flags the audit-log test as tracing to no acceptance criterion and either drops it or raises a missing criterion with the story's owner, without writing that criterion itself",
+        "Flags that criterion (2), orders with no region, has no test, and adds one",
+        "Labels each test it keeps or adds with the criterion it traces to"
+      ]
     }
   ]
 }
