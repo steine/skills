@@ -127,7 +127,7 @@ Anything to post — review comments, a *Limits* section, a fix-up PR plan — c
 
 ## 6. Feed misses back to the grill
 
-After the review, not inside it: for each *Fix now* finding that `grill-implementation` should have caught before any code was written — a spec gap, a vacuous check, a contract left unstated — ask whether its lenses cover the pattern. If they don't, offer to open an issue on this skill's repository, https://github.com/steine/skills, so the miss lands as a lens change instead of being fixed one PR at a time.
+After the review, not inside it: for each *Fix now* finding that `grill-implementation` should have caught before any code was written — a spec gap, a vacuous check, a contract left unstated — ask whether its lenses cover the pattern. A Spec finding whose root is a missing or vague acceptance criterion, whatever its recommendation, is `grill-feature`'s miss instead: check it against that skill's acceptance-criteria watch-fors the same way. If they don't, offer to open an issue on this skill's repository, https://github.com/steine/skills, so the miss lands as a lens change instead of being fixed one PR at a time.
 
 - **Generic only.** The repository is public and its skills stay domain-agnostic: describe the pattern with fictional `Acme.*` names, never the user's org, product, ticket ids or code.
 - **The user's own account.** Open it with whatever `gh` account the user is signed in with, and name that account in the confirmation.
