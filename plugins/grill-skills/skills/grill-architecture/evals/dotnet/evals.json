@@ -36,6 +36,21 @@
       "name": "service-to-service-inherits-legacy-query-shape",
       "prompt": "New service-to-service call: the Sales API needs order-summary data from the Catalog service (a separate service in the same solution). Plan: add a route to Catalog's existing `ProductsController` — `GET /products/order-summary?orderId={id}&vendorId={id}` taking query-string scalars, matching the shape of the existing `/products/search?term=` route the MVC front-end already hits via XHR. The Sales side calls it with a hand-built URL string in its `HttpClient`. Grill the architecture.",
       "files": []
+    },
+    {
+      "id": 11,
+      "name": "feature-handoff-parked-questions-and-draft-split",
+      "prompt": "Refining ACME-500, feature 'Customers can pause a subscription'. grill-feature already ran and drafted this onto the feature ticket. Draft story split: S1 'Customer pauses their subscription from the account page' — (1) a paused subscription is not charged at its next renewal; (2) the account page shows 'Paused until <date>'; stands alone. S2 'Customer resumes a paused subscription early' — (1) resuming charges at the next regular renewal; (2) the account page shows 'Active'; needs S1. S3 'Support agent pauses a subscription on a customer's behalf' — (1) the agent picks an end date up to three months out; (2) the customer gets the same confirmation email as a self-serve pause; needs S1. Parked for grill-architecture: (a) does the pause state live in Subscriptions or in Billing? (b) does the back-office call the Subscriptions API directly or go through the existing Acme.Support gateway? Parked for grill-implementation: (c) on S1, how the account page gets the pause end date without a second request. Context: Billing runs renewals in its own service; its SubscriptionStatusDto in Acme.Billing.Infrastructure mirrors Subscriptions' status enum (Active, Cancelled) and the renewal job charges every subscription that isn't Cancelled. My plan: a PauseSubscription command in Acme.Subscriptions.Application/Features/Subscriptions, a Paused status on the Subscription aggregate, Billing keeps reading status from GET /subscriptions/{id}. Grill the architecture.",
+      "files": [],
+      "assertions": [
+        "Puts each parked architecture question, (a) and (b), on the slate or states why it doesn't bind",
+        "Does not grill parked implementation question (c); carries it onto S1's ticket for grill-implementation",
+        "Spots that Billing charges everything that isn't Cancelled, so it must recognise the paused state before S1's first criterion can hold, and records that on the split as a dependency or an added enabling story",
+        "Edits the story split itself rather than sending it back to grill-feature",
+        "Closing offers one ticket per story, each with its acceptance criteria, parked implementation questions and dependencies, and marks the draft split on the feature as superseded",
+        "Asks for a yes before writing anything to the tracker",
+        "Does not re-grill the feature's goal or scope"
+      ]
     }
   ]
 }

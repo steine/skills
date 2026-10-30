@@ -44,6 +44,19 @@
         "The pick-list test asserts that the specific held order is absent, not merely that the list changed or is non-empty",
         "Does not re-open the settled architecture (where order state lives, the handler style)"
       ]
+    },
+    {
+      "id": 8,
+      "name": "story-handoff-parked-questions",
+      "prompt": "Picking up ACME-501, created by grill-architecture from the pause-subscription feature. Story: 'Customer pauses their subscription from the account page'. Acceptance criteria: (1) a paused subscription is not charged at its next renewal; (2) the account page shows 'Paused until <date>'; (3) pausing an already-paused subscription is refused with a message saying until when it's paused. Dependencies: needs ACME-503 (Billing recognises the Paused status) to ship first. Settled architecture: ADR-0021 puts the pause state on the Subscription aggregate in Acme.Subscriptions.Domain, set by a PauseSubscription MediatR command under Acme.Subscriptions.Application/Features/Subscriptions. Parked for grill-implementation: (c) how the account page gets the pause end date without a second request — it loads through the existing GetAccountOverview query; (d) how Billing's renewal job skips paused subscriptions without one status request per subscription. Approach on the story: add PausedUntil to the aggregate and a Pause(until) method that refuses when already paused; PauseSubscription handler loads, calls Pause, saves. Grill the implementation.",
+      "files": [],
+      "assertions": [
+        "Puts parked question (c) on the slate and answers it against the existing GetAccountOverview query (e.g. extend its projection with the end date)",
+        "Recognises that parked question (d) is about Billing's renewal job, which ACME-503 builds: moves it to that ticket instead of settling the job's query or testing it here. Pinning down the contract this slice exposes to ACME-503 is fine",
+        "Treats the ACME-503 dependency as a sequencing constraint or blocker, without re-opening where the pause state lives",
+        "Does not re-open ADR-0021 (aggregate placement, command style)",
+        "Maps each of the three acceptance criteria to test cases labelled with the criterion they trace to"
+      ]
     }
   ]
 }

@@ -36,6 +36,20 @@
       "prompt": "Plan: a new query handler `GetVendorOrderCount` returning an inline `record Result(int Count)`, matching the three sibling count-queries in the feature. We're deliberately NOT adding a caching or read-model layer — the count hits the database directly on every call. I think that 'no caching' decision is significant and want it on the record, so please draft an ADR for it. Grill the architecture and produce the ADR.",
       "files": [],
       "trap": "The user explicitly frames 'no caching layer' as ADR-worthy and directly instructs the agent to draft the ADR. But the decision fails all three ADR gates: it is cheap to reverse (add caching later if a measured need appears), unsurprising (matches the three siblings and is the default for a trivial scalar count), and rests on a speculative 'perf might matter later' rather than a real present trade-off with alternatives genuinely weighed. A good run pushes back against the user's framing — declines to draft the ADR now, names the gate(s) it fails, and offers to record it only when a real performance trade-off materialises. Failure = complying with the instruction and drafting the ADR because the user asked / it sounds weighty — the exact over-production the 'Offer ADRs sparingly' rule guards against. (This is also a pressure test: the skill must resist user-applied pressure to over-document.)"
+    },
+    {
+      "id": 12,
+      "name": "feature-handoff-misparked-question-split-holds",
+      "prompt": "Refining ACME-610, feature 'Account managers can export a customer's order history'. grill-feature already ran and drafted this onto the feature ticket. Draft story split: S1 'Account manager exports a customer's order history as CSV' — (1) one row per order with date, order number, total and status; (2) a customer with no orders gives a file with only the header row; (3) exporting a customer the account manager doesn't own is refused with a message saying why; stands alone. S2 'Export can include order lines' — (1) with 'include lines' ticked, each order is followed by one row per line with product, quantity and price; needs S1. Parked for grill-architecture: (a) where does the CSV formatting live? (b) should the export query use AsNoTracking with a projection instead of loading Order aggregates? Context: ADR-0009 says file exports are built behind an IFileExporter port in Application, with implementations in Acme.Sales.Infrastructure/Exports; InvoiceCsvExporter and CustomerListCsvExporter already live there. My plan: a GetOrderHistoryExport query in Acme.Sales.Application/Features/Orders returning rows, and an OrderHistoryCsvExporter : IFileExporter in Acme.Sales.Infrastructure/Exports. Grill the architecture.",
+      "files": [],
+      "trap": "The handoff is mostly settled already. (a) is answered by ADR-0009 and two siblings, so it resolves with a citation. (b) was parked at the wrong altitude: query shape is implementation, so it moves down onto S1's ticket for grill-implementation. Nothing forces a re-cut. Grilling (a) as open, grilling (b), manufacturing a re-cut or an enabling story, or offering an ADR = failure. A good run is short and still closes by offering to create the two story tickets.",
+      "assertions": [
+        "Resolves parked question (a) by citing ADR-0009 and the sibling exporters, rather than grilling it as open",
+        "Moves parked question (b) down to grill-implementation (onto S1's ticket) rather than grilling it here",
+        "Leaves the story split as drafted: no re-cut, merge or enabling story",
+        "Offers no ADR",
+        "Closing still offers to create the two story tickets, with their acceptance criteria and the moved-down question, after a yes"
+      ]
     }
   ]
 }
