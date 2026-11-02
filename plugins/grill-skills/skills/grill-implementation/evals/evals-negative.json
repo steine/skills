@@ -24,7 +24,7 @@
       "trap": "The slice itself is correct and minimal — it reuses QuoteVm.QuoteName, projects, has CT and a not-found guard. The user dangles a real codebase-wide consolidation opportunity (the quote-name string is derived in 2-3 divergent places). A good run keeps the slice as-is, and records 'consolidate the N quote-name derivations behind one affordance' as a PUNTED-UP item for improve-codebase-architecture — explicitly NOT expanding this slice to do the cross-codebase refactor. Failure = ballooning the slice into a multi-file unification, or grilling the other call sites as if they were in scope."
     },
     {
-      "id": 3,
+      "id": 6,
       "name": "empty-list-is-a-legitimate-result",
       "prompt": "About to add GET /api/orders/{customerId}/open to Acme.Sales: returns the customer's open orders as a list of `OpenOrderVm`, an empty list when there are none. The handler is a projected EF query with `AsNoTracking()` and takes the request's CancellationToken. Grill it.",
       "files": [],
