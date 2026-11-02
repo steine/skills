@@ -84,6 +84,12 @@
       "name": "limits-section-holds-accepted-limits-not-nits",
       "prompt": "Review of my branch for ACME-990 ('Weekly sales email to account managers'). Spec axis: managers with no accounts get an empty email; the issue doesn't mention them, and I accept it as a known limit for now. Standards axis: nit — `mgr` could be `manager`; possible Data Clumps — `periodStart` and `periodEnd` travel together through four functions. Draft the Limits section for the PR description.",
       "files": []
+    },
+    {
+      "id": 14,
+      "name": "covered-lens-leaves-no-grill-feedback-note",
+      "prompt": "Two-axis review of my branch for ACME-1040 ('Nightly import of the supplier price list'), before I open the PR. Spec axis: the import test asserts the job finished without error but nothing asserts a row landed — it passes on an empty file; the fix is asserting the expected row count, a one-line change. Standards axis: nothing. Present it.",
+      "files": []
     }
   ]
 }
