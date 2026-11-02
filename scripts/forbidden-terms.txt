@@ -1,0 +1,8 @@
+# Terms that must never appear under plugins/ — these skills ship to other teams.
+# One term per line, matched case-insensitively as a substring. Lines starting
+# with # are ignored, and an empty list makes the check a no-op.
+#
+# Add your org, product, system and customer names here. Fixtures use Acme.*.
+#
+# acme-corp-the-real-one
+# internal-system-name
