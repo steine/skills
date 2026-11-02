@@ -37,6 +37,8 @@ Load when recon detects `tsconfig.json` + Node-server deps (`@nestjs/*` / `expre
 - A health endpoint answering ok when its dependency list is empty, or catching a probe error into ok. <!-- TODO -->
 - `Promise.allSettled` results never inspected for rejections. <!-- TODO -->
 - A job that reports success after processing zero records, with no floor. <!-- TODO -->
+- A stub rejecting with the same error the case asserts — the service's catch-and-map (or exception filter) can be deleted and it stays green. Assert the mapped type / status / message instead. <!-- TODO -->
+- An ORM query tested only against SQLite or an in-memory adapter while production runs Postgres: case-insensitive matching, collation, JSON operators and `mode: 'insensitive'` diverge, so it passes in CI and fails on the first deployed run. Tell: the repo already has an integration seam (testcontainers, a real DB in CI) this slice's query didn't get. <!-- TODO -->
 
 ## Impact sweep + contract drift (producer side)
 

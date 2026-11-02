@@ -84,6 +84,21 @@
         "Requires the two new settings in the checked-in settings template (local.settings.template.json / appsettings.Example.json / equivalent) and the deployment parameters, because a knob absent there runs at its code default in every environment and the sampling it controls is never configured",
         "Puts the unmatched sites on the fix-now list, each tied to the sibling file that reveals it, or marks one N/A with a reason"
       ]
+    },
+    {
+      "id": 11,
+      "name": "doubles-that-satisfy-the-assertion-or-hide-the-provider",
+      "prompt": "Vetting the test list for a slice in `Acme.Billing` before I write it. The handler runs this EF Core query:\n\n```csharp\nvar due = await db.Invoices\n    .Where(i => (i.SettledOn ?? i.ClosedOn) == null\n                && activeCustomerIds.Contains(i.CustomerId)\n                && i.IsOverdue)                       // [Projectable] member on Invoice\n    .Select(i => new DueInvoiceVm(i.Id, i.CustomerId))\n    .ToListAsync(ct);\n```\n\nand its failure path counts and rethrows: `catch (InvalidOperationException) { _metrics.QueryFailed(); throw; }`.\n\nMy cases: (1) happy path — returns the overdue unsettled invoices for active customers, run against `UseInMemoryDatabase` like the other handler tests in this project; (2) failure path — stub the context to throw `InvalidOperationException`, assert `Assert.ThrowsAsync<InvalidOperationException>`. The handler is invoked hourly by a timer. A couple of other queries in the repo have `*SqlTranslationTests` classes. Folder, naming and layer are settled. Vet the list.",
+      "files": [],
+      "assertions": [
+        "Flags case (2) as satisfied by the stub's own exception — delete the catch/count/rethrow and it still passes",
+        "Requires a discriminator only the production path can produce, e.g. asserting the QueryFailed metric was counted (or a wrapped type / composed message) rather than the propagated type alone",
+        "Flags that the query is only exercised against UseInMemoryDatabase, which evaluates expression trees the relational provider may not translate",
+        "Names the specific constructs at risk — the ?? coalesce, the subquery Contains, the [Projectable] IsOverdue member — rather than a generic in-memory warning",
+        "Names the repo's existing *SqlTranslationTests precedent as the seam this query's case belongs at",
+        "Notes the cost shape: a translation failure surfaces on the first deployed run and fails every hourly invocation, not in CI",
+        "Stays slice-local — does not propose migrating the project's other handler tests off the in-memory provider"
+      ]
     }
   ]
 }

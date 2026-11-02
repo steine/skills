@@ -38,6 +38,9 @@ The grill-implementation spine carries each lens's *principle*; this pack carrie
 - A background or reconciliation job that logs "completed" after processing 0 items, with no floor on the processed count.
 - An early `return` on a missing precondition instead of `Skip` — the test reports as passed.
 - Assertions any outcome satisfies: `Assert.NotNull(result)` on a non-nullable, `Assert.True(items.Count >= 0)`.
+- A dependency stubbed to throw the very type the case asserts — `mock.Setup(...).ThrowsAsync(new InvalidOperationException())` under `Assert.ThrowsAsync<InvalidOperationException>` — so the handler's catch / log / count / rethrow can be deleted and the case stays green. Assert the wrapped exception type, the message the handler composes, its `InnerException`, or the metric / log it emitted.
+- A mock returning the exact value the assertion checks, so the mapping or derivation under test never runs.
+- An EF Core query exercised only against `UseInMemoryDatabase` (or SQLite in-memory): the in-memory provider evaluates expression trees the relational provider cannot translate — `??` over navigations, a subquery `.Contains(...)`, `[Projectable]` / computed members, client-evaluable method calls — so a green suite still throws on the first run in a deployed environment, and for a timer or job that is every invocation. Tell: the repo already has real-provider translation tests (a `*SqlTests` / `*SqlTranslationTests` class) that this slice's query didn't get.
 
 ## Impact sweep
 

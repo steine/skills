@@ -54,6 +54,18 @@
         "Marks the registration-site sweep satisfied once the host registration matches the sibling, instead of listing sites the repo does not have",
         "Does not turn the hard-coded tuning consts into a config-knob finding on the strength of this lens"
       ]
+    },
+    {
+      "id": 11,
+      "name": "doubles-that-are-already-honest",
+      "prompt": "Vetting the test list for a slice in `Acme.Billing`. The handler runs `db.Customers.Where(c => c.Id == request.Id).Select(c => new CustomerVm(c.Id, c.Name)).FirstOrDefaultAsync(ct)`, and its failure path is `catch (DbException ex) { throw new BillingUnavailableException(\"customer lookup\", ex); }`. My cases: (1) happy path against `UseInMemoryDatabase` — the only DB seam this repo has, there are no integration or real-provider test classes anywhere in it; (2) failure path — stub the context to throw `DbException`, assert `BillingUnavailableException` with its message and inner exception. Vet the list.",
+      "files": [],
+      "trap": "Both double tells are already satisfied. The asserted type is produced only by the handler's catch-and-wrap, so the stub cannot satisfy it on its own; and the query is a keyed equality plus a projection, with no construct the relational provider translates differently, in a repo with no real-provider seam to point at. Demanding a translation or integration test here, or a stronger oracle on case (2), is noise. Proposing to stand up a real-DB test seam is an improve-codebase-architecture punt, not this slice's fix-now list.",
+      "assertions": [
+        "Marks the double-satisfied oracle N/A, because the asserted exception type exists only on the handler's catch-and-wrap path",
+        "Marks the permissive-double tell N/A on the query's own constructs, not merely because tests are green",
+        "Does not put standing up a real-provider or integration seam on this slice's fix-now list"
+      ]
     }
   ]
 }

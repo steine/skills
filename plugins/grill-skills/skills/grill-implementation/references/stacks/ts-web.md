@@ -38,6 +38,9 @@ The grill-implementation spine carries each lens's *principle*; this pack carrie
 - `toHaveCount(0)` / `not.toBeVisible()` as the only assertion — passes when the page never rendered.
 - `test.skip(condition)` or an early `return` that fires in CI when a precondition is missing.
 - A `catch {}` around an assertion helper or a setup step.
+- A mocked module / msw handler returning exactly the value the assertion checks — the component's own transform, sort or null-handling never runs. Assert something only that code can produce.
+- A mock rejecting with the error the test then asserts on: the component's catch and error-mapping can be deleted and the case stays green.
+- A fixture the real API would never send — field always present, already sorted, already formatted — so the parse / normalize path is never exercised. Derive fixtures from the server's contract, and where the repo already has an e2e or contract seam for this behaviour, put the case there rather than leaning on jsdom.
 
 ## Impact sweep + contract drift
 
