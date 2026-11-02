@@ -92,6 +92,18 @@
         "Has an explicit out-of-scope list",
         "Does not prescribe performance mechanics (index, cache, query shape) to make the filter fast"
       ]
+    },
+    {
+      "id": 11,
+      "name": "guard-criterion-hides-what-the-loosened-check-now-accepts",
+      "prompt": "Story under ACME-470: 'Invoices exported from the new billing portal import without manual editing.' The importer rejects them today because it requires the header row to match the old export exactly; the fix is to match headers loosely. Acceptance criteria: (1) A file exported from the new billing portal imports successfully. (2) The import still rejects a file with no rows. Grill the story.",
+      "files": [],
+      "assertions": [
+        "Flags criterion (2) as a lone guard that pins one failure mode of the loosened header match and leaves the rest unstated",
+        "Asks which other files the loose header match now accepts (e.g. an export from a different system whose headers partly match, columns in a different order, a missing column) and wants each as its own criterion or an explicit out-of-scope line",
+        "Does not grill or decide implementation (matching algorithm, normalization, parser library, how it is tested)",
+        "Every drafted acceptance criterion is observable by the person doing the import or an operator, none checks internal state (parser flags, stored column mappings)"
+      ]
     }
   ]
 }

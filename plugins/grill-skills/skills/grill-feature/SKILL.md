@@ -47,6 +47,7 @@ For each story, draft acceptance criteria. Each one observable by someone using 
 - a criterion that checks internal state (a stored field, a flag, a date the system computes) instead of what someone sees — it smuggles a data model into the story
 - a criterion that restates the story or the goal instead of saying how to check it
 - a happy path with no criterion for the edge cases the scenarios surfaced
+- a lone guard criterion ("it still rejects…", "it still fails when…") on a story that loosens an existing check — it pins the one failure mode someone had in mind and says nothing about the other states the check now lets through; ask which those are, and give each its own criterion or an explicit out-of-scope line
 
 The split is a draft. `grill-architecture` may re-cut it — an enabling story a decision requires, two stories that must ship together — and it edits the split directly rather than sending it back here, then creates the story tickets.
 
