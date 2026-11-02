@@ -17,7 +17,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
 DEBT_FILE = ROOT / "scripts" / "lint-debt.json"
-TERMS_FILE = ROOT / "scripts" / "forbidden-terms.txt"
+
+# A namespace of three or more segments is a project's own. Fixtures use Acme.*;
+# the rest are framework roots, not organisations.
+FIXTURE_ROOT = "Acme"
+FRAMEWORK_ROOTS = {"System", "Microsoft", "Newtonsoft", "Serilog", "Xunit"}
+NAMESPACE = re.compile(r"\b[A-Z][A-Za-z0-9]+(?:\.[A-Z][A-Za-z0-9]+){2,}\b")
 
 errors: list[str] = []
 warnings: list[str] = []
@@ -134,25 +139,24 @@ def check_evals() -> None:
         warn(DEBT_FILE, f"`{stale}` now has assertions (or is gone) — drop it from the debt list")
 
 
-def check_forbidden_terms() -> None:
-    """Skills ship to other teams: no org, product or system names."""
-    if not TERMS_FILE.exists():
-        return
-    terms = [
-        line.strip()
-        for line in TERMS_FILE.read_text().splitlines()
-        if line.strip() and not line.startswith("#")
-    ]
-    if not terms:
-        return
-    pattern = re.compile("|".join(re.escape(t) for t in terms), re.IGNORECASE)
+def check_fixture_namespaces() -> None:
+    """Skills ship to other teams: fixtures name Acme, never a real codebase.
+
+    Checked as a convention rather than a denylist — a list of the names to keep
+    out would have to carry them in a public repo to keep them out of it.
+    """
     for path in sorted(ROOT.glob("plugins/**/*")):
         if not path.is_file() or path.suffix not in {".md", ".json"}:
             continue
         for n, line in enumerate(path.read_text(errors="ignore").splitlines(), 1):
-            hit = pattern.search(line)
-            if hit:
-                error(path, f"line {n} names `{hit.group(0)}` — skills stay domain-agnostic")
+            for hit in NAMESPACE.finditer(line):
+                root = hit.group(0).split(".", 1)[0]
+                if root == FIXTURE_ROOT or root in FRAMEWORK_ROOTS:
+                    continue
+                error(
+                    path,
+                    f"line {n} names `{hit.group(0)}` — fixtures use {FIXTURE_ROOT}.*",
+                )
 
 
 def check_stub_packs() -> None:
@@ -177,7 +181,7 @@ def main() -> int:
         check_orphan_references,
         check_versions,
         check_evals,
-        check_forbidden_terms,
+        check_fixture_namespaces,
         check_stub_packs,
     ):
         check()
