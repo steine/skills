@@ -7,7 +7,7 @@ description: "Feature-level pressure-test of a stakeholder ask, the first step o
 
 Grill the user about the stakeholder's ask until the feature is clear enough to architect: what problem it solves and for whom, what is in and out of scope, which user stories it breaks into, and how anyone will know each story is done.
 
-Invoke the `grilling` skill for the session mechanics and the `domain-modeling` skill for the glossary, both from [mattpocock/skills](https://github.com/mattpocock/skills) — `mattpocock-skills:grilling` and `mattpocock-skills:domain-modeling` when installed as his plugin — and follow both. Where they conflict with the scope rules below, the scope rules win. Use Matt's: another source may ship a skill under the same name (`anthropic-skills:grilling`, say) with a different session format, and it is not a substitute. If his aren't available, stop and tell the user where they come from.
+Invoke the `grilling` skill for the session mechanics and the `domain-modeling` skill for the glossary, both from [mattpocock/skills](https://github.com/mattpocock/skills) — `mattpocock-skills:grilling` and `mattpocock-skills:domain-modeling` when installed as his plugin — and follow both. Where they conflict with the rules below — the scope rules, and the preamble each round opens with — the rules below win. Use Matt's: another source may ship a skill under the same name (`anthropic-skills:grilling`, say) with a different session format, and it is not a substitute. If his aren't available, stop and tell the user where they come from.
 
 This is the problem space. How the feature gets built has its own skills, later in refinement and in the sprint. Don't grill it here.
 
@@ -24,6 +24,46 @@ Before the first round:
 3. **Current behaviour.** What the system does today in the area the ask touches, as observable behaviour — enough to tell what the ask changes. Read code for facts, not for design.
 4. **Similar past work.** Earlier features and stories in the same area of the tracker: how their goals and scope were cut, how big their stories were, what their acceptance criteria looked like. Draft from them where they fit.
 5. **The tracker's templates.** If the team has a feature or story template, read it now: its sections are where the output goes, and any notes on who writes what bind you.
+
+Recon is agent-internal. Surface it in the preamble as **one-liner bullets** — topic + load-bearing fact per bullet. Drop prose connectives and non-load-bearing paths; keep only facts an auto-resolve or a question's recommendation will cite. Reserve the detail — quotes, numbers, the past story it echoes — for the question that consumes it.
+
+## Preamble format
+
+`grilling` asks the whole frontier in one round. Open each round with a slate of **topic labels**, so the user sees the round's shape before any question body:
+
+```
+Recon:
+- <who asked, in which words>
+- <what the system does today in the area the ask touches>
+- <glossary terms the ask conflicts with or is missing>
+- <how similar past work was cut: goal, scope, story size>
+- <volume or usage facts that decide what is still live>
+
+Auto-resolved:
+- A1  <decision>                       (Reason: <one-line reason>)
+
+Round 1:
+Q1  <topic label, 2-5 words>
+Q2  <topic label, 2-5 words>
+...
+Waits on this round: <topic label>, <topic label>
+
+Proceed with round 1?
+```
+
+On a yes, emit that round's questions in `grilling`'s format — body, options, recommended answer. Slate entries are labels, never option lists or trade-off summaries; a question's body emits only when its round fires. Each later round opens with its own slate: the recomputed frontier, plus whatever the answers just auto-resolved.
+
+**Auto-resolve** a question when recon closes it before it reaches the user — a fact that removes an option (a key with no live volume, a screen that doesn't exist), a precedent from similar past work with no conflicting signal, or an answer already given upstream by the parent epic ("answered upstream by `<ref>`"). State it as applied with a one-line reason; the user can override.
+
+**Never auto-resolve** — these are the stakeholder's, and an answer that skips the asking reads as already settled:
+
+- The goal, or what problem the ask solves
+- A scope cut a stakeholder could reasonably want the other way
+- The story split
+- Any acceptance criterion
+- What a term means, where the glossary conflicts with the ask or is silent on it
+
+A question the user can't answer is not an auto-resolve: it goes to **Open stakeholder questions** with your recommendation, per *Who decides*.
 
 ## What to grill
 
