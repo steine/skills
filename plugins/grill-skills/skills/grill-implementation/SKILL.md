@@ -149,6 +149,8 @@ Every case traces to a criterion or a refinement scenario; label it with the cri
 
 Run *Vacuous success* on each drafted case: name the broken state it must reject, and tighten the assertion if it wouldn't.
 
+**Unreached branch.** For each negative or sibling case whose criterion names a field the production code decides on, name the branch the case has to reach and confirm that branch reads that field. A predicate that short-circuits ahead of it — a bundle, override or precedence check before the plain comparison — makes the case a sibling on *that* axis instead, so the dimension the criterion names ships untested behind a green test. The assertion is sound here; the input never arrives, so *Vacuous success* doesn't see it. Tells: the fixture leaves the varied field empty or default, because nothing reads it; the case differs from the positive one in more than the single dimension; the criterion's field appears nowhere in the branch the case takes. Fix the fixture so the branch is live — and add the case for the precedence rule itself, which usually nothing covers either.
+
 ## Verify facts in-grill
 
 These lenses turn on facts — does the affordance exist, is the column persisted, does the sibling over-fetch, what version is hoisted. Verify with Bash / Read / grep inside the grill before recommending. Memory is not confirmation; don't ship a recommendation with "I think" or punt to "check later." A grill produces decisions.
