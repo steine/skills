@@ -46,6 +46,7 @@ The grill-implementation spine carries each lens's *principle*; this pack carrie
 - Components / selectors consuming the changed type.
 - Query keys / cache entries keyed on the old shape.
 - Generated-client regen, if codegen is in use.
+- **Registration sites for a non-type resource the slice adds** — grep the nearest sibling of that kind and match its file set: a new route in the route table *and* the nav/menu and any e2e smoke list; a new env var in `.env.example` plus the bundler's exposure prefix (`VITE_` / `NEXT_PUBLIC_`) and the deploy config, or it is undiscoverable and `undefined` in every environment; a feature flag's per-environment default; a new i18n key in **every** locale file, not only the default one.
 
 ## Cross-workspace dependency-graph compat
 

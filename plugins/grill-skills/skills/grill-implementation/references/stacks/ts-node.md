@@ -46,6 +46,7 @@ Load when recon detects `tsconfig.json` + Node-server deps (`@nestjs/*` / `expre
 - **Response DTOs auto-serializing entity props** — a new column leaks outward to every consumer. This back-end is usually the **producer**: sweep the front-end's hand-mirror of this DTO (and any other service's). Codegen contract → regen; hand-mirrored downstream → a cross-repo contract to update in lockstep, flag as a blocker. <!-- TODO -->
 - Migration (Prisma/TypeORM migrate) + schema. <!-- TODO -->
 - Seed data with a hard-coded shape. <!-- TODO -->
+- **Registration sites for a non-type resource the slice adds** — a job / queue consumer in the scheduler or module registration and any liveness watchlist; a new env var in `.env.example` *and* the config schema (zod / `ConfigModule` validation), or it runs at its code default everywhere; a new alert rule in the doc or runbook table that lists them. Grep the nearest sibling of that kind and match its file set. <!-- TODO -->
 
 ## Cross-workspace dependency-graph compat
 

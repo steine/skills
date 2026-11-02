@@ -1,6 +1,6 @@
 ---
 name: grill-implementation
-description: "Implementation-level pressure-test of a single slice before writing code. If the story has acceptance criteria but no approach, drafts one first. Validates the slice's mechanics against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs) — reuse of existing affordances, read-path minimalism, interface spec-gaps (cancellation, error contract, observability, idempotency), vacuous success (a test or check that can pass without checking what it claims), the impact of any type/schema change, cross-boundary contract drift, and cross-workspace dependency-graph compatibility — then maps each acceptance criterion to test cases. Use at issue-start once the architecture is settled (ADRs/grill-architecture done) and you're about to implement. For a finished diff before PR, use review instead. Does not re-litigate naming, folder, layer or port-shape. Output: the slice approach, a fix-now list, and a test list traced to the acceptance criteria. No ADRs."
+description: "Implementation-level pressure-test of a single slice before writing code. If the story has acceptance criteria but no approach, drafts one first. Validates the slice's mechanics against the codebase via composable per-stack packs (.NET + TS-web/React complete; TS-node/Angular/Ruby/Go stubs) — reuse of existing affordances, read-path minimalism, interface spec-gaps (cancellation, error contract, observability, idempotency), vacuous success (a test or check that can pass without checking what it claims), the impact of any type/schema change or added resource, cross-boundary contract drift, and cross-workspace dependency-graph compatibility — then maps each acceptance criterion to test cases. Use at issue-start once the architecture is settled (ADRs/grill-architecture done) and you're about to implement. For a finished diff before PR, use review instead. Does not re-litigate naming, folder, layer or port-shape. Output: the slice approach, a fix-now list, and a test list traced to the acceptance criteria. No ADRs."
 ---
 
 <what-to-do>
@@ -43,6 +43,7 @@ Walk these first — they're cheap and they collapse most questions into auto-re
 3. **Sibling read/write paths.** Find the nearest existing read and write in the same feature. Note whether the read moves only what its caller consumes, and the stack's over-fetch idiom (the pack lists tells). The slice should match the sharper of the two, not the looser.
 4. **Workspace edges.** If the slice introduces an import from a shared workspace lib (`workspaces:` package, `file:`-linked dep) that this consumer doesn't already pull through, flag it now — first crossings reshape the dependency graph and surface latent version/tsconfig mismatches.
 5. **Cross-boundary contracts.** If the slice changes a server VM/DTO, grep the front-end for a hand-mirrored type (often a `// Mirrors <Namespace>.<Vm>` comment, or a `res.json() as T` cast). No compiler edge crosses the HTTP boundary, so the mirror drifts silently — note it now so the change-shape question knows to sweep it.
+6. **Sibling registrations.** If the slice adds a resource that isn't a type — a scheduled job, worker, queue, alert rule, feature flag, config knob, health check — name the nearest existing sibling of that kind and grep the repo for its name. Every file that mentions it (a watchlist query, a monitoring doc's table, a settings template, IaC parameters) is the registration checklist the impact sweep runs the new resource against.
 
 Surface recon as a short bullet list in the preamble — one line per load-bearing finding (affordance found, sibling read shape, ADR state, workspace edge). Pack topic + fact per bullet; drop prose connectives and non-load-bearing paths. Detailed excerpts belong inside the question that consumes them.
 
@@ -65,6 +66,7 @@ Recon:
 - <affordances found on touched modules>
 - <sibling read/write shape>
 - <workspace edges / cross-boundary contracts, if any>
+- <sibling registration sites, if the slice adds a non-type resource>
 
 Approach (draft — omit if the story has one):
 - <touched modules / sibling followed>
@@ -117,7 +119,13 @@ A slice whose verdict guards or replaces something puts these on the fix-now lis
 
 ### Cross-cutting impact sweep
 
-For each schema / type / contract change in the slice, sweep the blast radius before finalizing; mark each item mandatory / optional / N/A. Post-merge discovery costs far more than pre-implementation discovery. → **Pack: *Impact sweep*** for the stack's call-site / fixture / mapping / migration tells.
+For each schema / type / contract change in the slice, sweep the blast radius before finalizing; mark each item mandatory / optional / N/A. Post-merge discovery costs far more than pre-implementation discovery.
+
+**Registrations, not only types.** A changed type propagates through code that references it, so the compiler and a grep on the type name find the sites. A resource the slice *adds* that is not a type — a scheduled job, worker, queue, alert rule, dashboard, feature flag, config knob, health check, route, permission — propagates instead through places that name it in files nothing in the code points at: a liveness watchlist query, a monitoring doc's table, the checked-in settings template, an access list. No compiler edge and no type-name grep reaches those, so the slice ships the resource live and half-registered — a knob sitting at its code default in every environment, a job no probe watches. Sweep them for each non-type resource the slice adds, and for one it removes (its registrations now point at nothing).
+
+The tell is **asymmetry against the nearest sibling**: grep the repo for the name of an existing resource of the same kind — the timer added last quarter, the neighbouring alert rule, a sibling config key — and list every file that mentions it. Each of those files is a registration the new resource owes, or a deliberate `N/A` with a reason. The sibling's file set is also the ceiling: a site the repo doesn't have for the sibling isn't one this slice has to invent. Written rules count as registrations — a doc table that states the rules explicitly, a runbook, an example settings file.
+
+→ **Pack: *Impact sweep*** for the stack's call-site / fixture / mapping / migration tells and its registration sites.
 
 ### Cross-boundary contract drift
 

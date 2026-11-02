@@ -42,6 +42,18 @@
         "Flags that criterion (2), orders with no region, has no test, and adds one",
         "Labels each test it keeps or adds with the criterion it traces to"
       ]
+    },
+    {
+      "id": 10,
+      "name": "added-resource-whose-sibling-has-no-registrations",
+      "prompt": "Slice in `Acme.Billing`: add a `RetryQueueDrainService` (`BackgroundService`) that drains the retry queue, following the existing `OutboxDrainService`. For reference: `OutboxDrainService` is registered in `Program.cs` and appears nowhere else in the repo — no watchlist query, no runbook table, no settings template, and its tuning values are consts in the class, like the ones I'm adding. Grill the implementation before I build it.",
+      "files": [],
+      "trap": "The registration-site sweep must come back at the sibling's file set: one entry, the Program.cs registration. Demanding a watchlist query, a runbook table, a settings template, or moving the consts to configuration — sites this repo does not have for the sibling — is inventing registrations and belongs to improve-codebase-architecture, not this slice's fix-now list.",
+      "assertions": [
+        "Greps the sibling service and reports its file set as the checklist",
+        "Marks the registration-site sweep satisfied once the host registration matches the sibling, instead of listing sites the repo does not have",
+        "Does not turn the hard-coded tuning consts into a config-knob finding on the strength of this lens"
+      ]
     }
   ]
 }

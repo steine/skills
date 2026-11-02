@@ -49,6 +49,14 @@ The grill-implementation spine carries each lens's *principle*; this pack carrie
 - The right migration project (multi-context repos).
 - Seed data / fixtures with a hard-coded entity shape.
 
+**Registration sites.** The tells above all fire on "a type changed"; these fire on "a resource was added". Grep the nearest sibling of the same kind by name and match its file set entry for entry:
+
+- A new timer / `BackgroundService` / queue- or event-triggered function: its DI or host registration, and any **liveness or watchlist query** that enumerates the expected jobs by name.
+- A new configuration value (`IOptions<T>` binding, app setting, connection string): the checked-in settings template (`local.settings.template.json`, `appsettings.Example.json`, `.env.example`) and the IaC / deployment parameter list. Absent there the knob is undiscoverable and runs at its code default in every environment — the slice's default quietly becomes the config, and whatever it tunes is never actually configured.
+- A new alert rule / metric / dashboard under `infra/`: the monitoring doc or runbook table that states the rules, and the action / notification group the sibling rules point at.
+- A new health check: its `AddHealthChecks()` registration, plus any probe or dashboard that names the expected checks.
+- A new endpoint, authorization policy or feature flag: route registration, the policy list, the flag's per-environment default.
+
 ## Contract drift / cross-workspace compat
 
 Front-end-side lenses — usually `N/A` for a pure .NET slice (the backend *is* the contract source, not a hand-mirror). A .NET VM change that a front-end re-declares is caught via **Impact sweep** above plus the front-end impl pack's contract-drift tells.

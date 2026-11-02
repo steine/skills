@@ -70,6 +70,20 @@
         "Raises the uncovered precedence rule — a bundled tier is decided by bundle type, not region — as its own case or a criterion gap for the story owner",
         "Does not re-open naming, folder, layer or predicate shape (settled at architecture altitude)"
       ]
+    },
+    {
+      "id": 10,
+      "name": "registration-sites-for-an-added-resource",
+      "prompt": "Slice in `Acme.Billing`: add a timer `TimerReconcileLedgerEntries` that runs hourly and reconciles yesterday's entries, plus one alert rule for it under `infra/alerts/`. The timer reads two new settings, `Reconcile:BatchSize` and `Reconcile:SamplingRate`, bound through `IOptions<ReconcileOptions>` with defaults in code. No entity, DTO or schema changes. Folder, naming and layer follow the existing `TimerReconcileInvoices` timer and are settled. Grill the implementation before I build it.",
+      "files": [],
+      "assertions": [
+        "Runs the impact sweep even though the slice changes no type or schema — it adds resources",
+        "Greps the sibling timer (TimerReconcileInvoices) and the neighbouring alert rule by name and treats every file that mentions them as the registration checklist for the new ones",
+        "Names the liveness / watchlist query that enumerates the expected jobs as a site the new timer owes an entry",
+        "Names the monitoring doc or runbook table that states the alert rules as a registration site, not just the infra/alerts file",
+        "Requires the two new settings in the checked-in settings template (local.settings.template.json / appsettings.Example.json / equivalent) and the deployment parameters, because a knob absent there runs at its code default in every environment and the sampling it controls is never configured",
+        "Puts the unmatched sites on the fix-now list, each tied to the sibling file that reveals it, or marks one N/A with a reason"
+      ]
     }
   ]
 }
