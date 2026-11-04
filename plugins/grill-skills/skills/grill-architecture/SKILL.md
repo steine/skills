@@ -159,4 +159,6 @@ When the grill is done, produce a summary:
 
 Most settled decisions in a grill are not ADRs. Offer one only for a hard-to-reverse, surprising, genuinely traded-off pick, and let `write-adr` run its gate — if it says no, the decision goes in the revised plan or the PR instead.
 
+Judge the claim, not its shape. A grill settles shapes — a key, a type, a column — and a shape always looks hard to reverse and traded-off. Before offering, state what the decision says at domain level. If that is an accepted ADR applied at a finer granularity, offer no new record; if the accepted ADR's text named the shape that just changed, hand `write-adr` the restatement instead.
+
 </supporting-info>
