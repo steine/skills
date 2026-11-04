@@ -19,6 +19,8 @@ Then read the accepted ADRs that touch the same area. You need them for step 3.
 
 ## 1. Gate — is this an ADR at all?
 
+**Gate the claim, not its shape.** First write the claim at the altitude where it would stay true if its shape changed — the key, the column, the enum, the number of rows. Shape passes the gate too easily: a migration is always costly and an alternative always exists. If only the shape passes, it belongs in the PR. If the claim is an accepted decision applied at a finer granularity (one more case in a table that already decides by case), it is not a new decision — but check step 3's over-specified case before concluding nothing changes.
+
 All three must hold. Put them to the user as questions, with your read of each:
 
 1. **Hard to reverse** — changing course later costs something real (data already shaped by it, external systems depending on it, a quarter of rework).
@@ -26,6 +28,8 @@ All three must hold. Put them to the user as questions, with your read of each:
 3. **A real trade-off** — there were genuine alternatives, and this one won for stated reasons.
 
 If any fails, it is not an ADR. Say where the content belongs instead: the PR description (how it was built), the ticket (what was asked), the domain glossary (what a term means now), or the code itself (a name, a type, a test). A decision that is easy to reverse gets reversed, not recorded.
+
+**A reason that will expire is not durable.** If the decision exists only because a system can't do something yet — a capability gap expected to close — the gap is a status, not a decision: it goes in the ticket and the glossary's implementation-status notes. Catch it here, at the gate, not only at self-review: by then the record is already drafted around it.
 
 What typically qualifies: architectural shape, integration patterns between contexts, technology with lock-in, ownership and boundary calls (the explicit no's too), deliberate deviations from the obvious path, constraints invisible in the code, and rejections a future reader would otherwise re-propose.
 
@@ -44,6 +48,7 @@ Decide which case applies and tell the user:
 - **New** — nothing accepted covers it.
 - **Replaces an accepted ADR wholesale** — the new record lists it in `supersedes`, and the old one's frontmatter becomes `status: superseded` with `superseded-by` naming the new record (add to the list if it already has successors). Those frontmatter lines are the only edit to the old file.
 - **Replaces part of an accepted ADR** — treat this as a smell: the old record bundled decisions. Prefer superseding it wholesale and restating, in the new record or in separate new records, the parts that still hold. Only if that is disproportionate, the new record lists it in `supersedes-in-part`, and the old one keeps `status: accepted` and gains `superseded-in-part-by`, with the new record naming exactly which of its decisions it replaces.
+- **Contradicts only the shape an accepted record named, while its decision still holds** — the record is over-specified: it stated its first implementation (a key, a granularity, what a row holds) as if that were the decision, and a change that leaves the decision intact still makes its text untrue. Supersede it wholesale with a restatement at the decision's altitude, naming the change that exposed it in Context. Write no record for the shape change itself; it goes in the PR. The successor's "We will …" sentence should rule out the same alternatives the old one did — if it rules out nothing, it has gone too loose.
 - **Narrows where an accepted rule applies, replacing none of it** — an exception, not a supersession: nothing in the rule stopped being true. The new record lists the rule in `exception-to`, the rule gains `exceptions` naming the new record, and both stay `accepted`. Don't use `superseded-in-part-by` for this — it claims part of the rule is dead — and don't leave the link one-way, or a reader of the rule never finds the exception. Avoid calling it "amends": that suggests the decision itself changed.
 - **Makes a consequence of an accepted record untrue, while its decision still holds** — nothing is superseded and the old record is not touched. An accepted record's *decision* is what stays in force; its consequences record what was expected when it was written. As Nygard puts it, the consequences of one ADR become the context for later ones: the new record says in its Context which earlier consequence no longer holds, citing that record, and the current behaviour is stated in the glossary, which is where a reader should look for it.
 - **Makes a restating sentence in an accepted record untrue, while its own decision still holds** — the sentence names another record by number and restates *that* record's decision (a narrower rule, an exception, a sibling). It is a cross-reference, not part of this record's decision: nothing is superseded and the body is not touched. Update the frontmatter link instead, e.g. add the new record to the rule's `exceptions`. The test is mechanical: if a successor's "We will …" sentence would be identical to the old one, don't supersede. A sentence that doesn't name the other record by number is part of the decision, and changing it means superseding.
@@ -126,6 +131,7 @@ Check the draft against each anti-pattern and fix before presenting:
 | **Fairy tale / Free lunch** | Consequences include real costs. |
 | **Sprint / Dummy alternative** | Alternatives are ones someone would actually propose — or the section is omitted with good reason. |
 | **Sales pitch** | No unsupported superlatives; claims are factual. |
+| **Over-specified** | A foreseeable change of key, granularity or shape would force superseding this record while its "We will …" sentence stays the same. If so, the identifier isn't the decision — take it out. |
 | **Status snapshot** | Nothing in Context, Decision or Consequences is phrased with "today", "yet", "for now" or "until X ships". Every lagging door, flag or stopgap is moved to the glossary's implementation-status notes and a ticket, and the consequence is stated as a lasting cost. |
 | **Stale neighbour** | Every accepted record whose *decision* this one contradicts is superseded or marked in part. An earlier record whose consequence no longer holds is cited in this record's Context instead, and the glossary states the current behaviour. A restating sentence that names this record's predecessor by number is a cross-reference: its frontmatter link is updated, and the record is not superseded. |
 | **Orphaned decision** | Every decision in each superseded or deprecated record is restated, moved to the glossary/code/README, or explicitly dropped with a reason. |

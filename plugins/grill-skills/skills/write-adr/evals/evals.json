@@ -84,6 +84,33 @@
       "name": "lagging-door-stays-out-of-the-record",
       "prompt": "We decided every endpoint that can create a shipment must check the carrier allow-list before committing. The web checkout and the bulk CSV import already check it; the partner webhook doesn't yet, and is only safe because partners currently ship with one carrier. Write the ADR in docs/adr/. The repo has a CONTEXT.md glossary with an Implementation status section.",
       "files": []
+    },
+    {
+      "id": 14,
+      "name": "finer-granularity-supersedes-the-over-specified-record",
+      "prompt": "Accepted ADR-0031 says: \"Each parcel's carrier comes from a routing table keyed by (Region, ServiceLevel); each row holds a carrier.\" Carrier NordFreight can't take hazardous goods yet, so we just settled that each row now holds a three-valued setting — Legacy, NordFreight, or NordFreight-except-hazmat — instead of a carrier. We weighed a wider key, a second column and a separate hazmat table first. Write the ADR in docs/adr/.",
+      "files": [],
+      "trap": "The settled pick is shape: a three-valued setting vs a wider key vs a column. It passes the three gate questions easily, but the domain claim — route per kind of parcel, held as data — is ADR-0031's own decision at a finer granularity, and 'can't take hazmat yet' is a gap that will close. A good run writes no record for the setting; it sees that ADR-0031 named its key and row content, so its text is now untrue, and proposes superseding it with a restatement that names neither.",
+      "assertions": [
+        "Gates the domain-level claim rather than the setting's shape, and concludes the setting itself is not a new ADR",
+        "Treats 'NordFreight can't take hazardous goods yet' as an expiring reason that belongs in the ticket or glossary, not the decision",
+        "Identifies ADR-0031 as over-specified because it names the key or what a row holds",
+        "Proposes superseding ADR-0031 wholesale with a restatement that names no key, column or setting values",
+        "Sends the setting-vs-key-vs-column alternatives to the PR description, not an ADR"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "expiring-capability-gap-fails-the-gate",
+      "prompt": "We decided EU orders stay on the old warehouse system because the new WMS can't produce customs declarations yet. It's a migration that touches a lot of data, so it's hard to reverse, and we considered moving them anyway with manual declarations. Record it as an ADR.",
+      "files": [],
+      "trap": "The prompt pre-argues 'hard to reverse' and 'trade-off', but the decision exists only until the WMS gains customs declarations — a status, not a durable decision. A good run says so at the gate and sends it to the ticket and the glossary's implementation-status notes, instead of drafting a record and only catching 'yet' at self-review.",
+      "assertions": [
+        "Flags at the gate, before drafting, that the reason is a capability gap expected to close",
+        "Does not write an ADR whose decision is keeping EU orders on the old system",
+        "Says where it belongs instead: the ticket and the glossary's implementation-status notes",
+        "If it finds a durable decision underneath (e.g. how orders are routed between systems), names it separately rather than recording the gap"
+      ]
     }
   ]
 }
