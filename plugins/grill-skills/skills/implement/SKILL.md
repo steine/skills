@@ -16,6 +16,6 @@ Run typechecking regularly, single test files regularly, and the full test suite
 
 Commit your work to the current branch. Commit before reviewing: the review only sees commits.
 
-Then use /grill-skills:review against that fixed point. Apply every *Fix now* item, commit, and re-run the review until none remain. Stop and ask the user about any *Verify first* or *Your call* item. Leave *Allow* findings as they are.
+Then run /grill-skills:review once against that fixed point. Apply every *Fix now* item and commit; that single pass is the review. Stop and ask the user about any *Verify first* or *Your call* item. Leave *Allow* findings as they are.
 
 Adapted from the `implement` skill in [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
