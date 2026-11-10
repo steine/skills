@@ -57,7 +57,7 @@ Sub-agents can be wrong, and a fix-now tag costs real work. Before tagging:
   "The failure is unlikely", "rare in practice" and "strictly better than before" are **not** reasons to downgrade. If it's in purpose and cheap, it's fixed now.
 - **Allow** — the default: let it into the codebase as it is: judgement calls, baseline smells, naming, helper shape, a known limit nothing can fix (say why). When it's a real gap outside the issue's purpose, add a proposed ticket: title and one-line scope.
 - **Verify first** — a held finding from step 3. Name the one check that settles it and what the recommendation becomes either way.
-- **Your call** — in purpose but not cheap. Lay out the two options — fix now, or cut it into a ticket (proposed title) — and don't decide it yourself.
+- **Your call** — in purpose but not cheap. Lay out the two options — fix now, or cut it into a ticket (proposed title) — and don't decide it yourself. On someone else's PR it's the **Author's call**, wherever this skill says *Your call*: the same two options, for the PR's author to choose.
 
 A finding can carry two when it splits — e.g. *Fix now* for a false README claim plus *Your call* for the stricter check behind it.
 
@@ -116,7 +116,7 @@ Keep the axes apart so the reader stays in one kind of problem at a time: all of
 **Next** depends on whose change it is:
 
 - **Your own branch** — offer to apply the fix-now items. Anything the user accepts as a known limit, with its proposed ticket if it has one, goes into a *Limits* section for the PR description.
-- **Someone else's PR** — fix-now items and proposed tickets go in the review comment. Direction-level ideas (a different overall approach, a shared abstraction elsewhere) go in a **separate** comment marked non-blocking, so they read as context rather than added scope. The author owns their issue and PR; whether to accept a proposal, and any tracker updates, are theirs. If the PR is already merged, fix-now items become a fix-up PR. Never push fixes to the author's branch yourself. Confirm with the user before posting anything.
+- **Someone else's PR** — fix-now items and proposed tickets go in the review comment. Each *Author's call* goes in it as the gap plus both options, and the author picks; draft the comments straight after the review, so the user decides only what to raise and whether to post. Direction-level ideas (a different overall approach, a shared abstraction elsewhere) go in a **separate** comment marked non-blocking, so they read as context rather than added scope. The author owns their issue and PR; whether to accept a proposal, and any tracker updates, are theirs. If the PR is already merged, fix-now items become a fix-up PR. Never push fixes to the author's branch yourself. Confirm with the user before posting anything.
 
 Either way, **a plain *Allow* stays off the PR** — one with no proposed ticket that the user hasn't accepted as a known limit gets no review comment and no line in the PR description. Allow means it can go in as it is, and every posted nit is a thread someone has to answer. Two exceptions:
 
